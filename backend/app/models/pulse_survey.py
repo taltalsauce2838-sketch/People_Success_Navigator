@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Text, DateTime, Date, UniqueConstraint
+from sqlalchemy import Column, Integer, ForeignKey, Text, DateTime, Date, UniqueConstraint, CheckConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -12,9 +12,9 @@ class PulseSurvey(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    score = Column(Integer)
-
-    memo = Column(Text)
+    score = Column(Integer, CheckConstraint('score >= 1 AND score <= 5'), nullable=False)
+    
+    memo = Column(Text, nullable=True) # 空白も許容
 
     # ★追加：1日1回制御用
     survey_date = Column(Date, nullable=False)
