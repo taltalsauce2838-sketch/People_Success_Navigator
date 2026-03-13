@@ -15,8 +15,8 @@ class SurveyAnalysis(Base):
     # AIによるコメント評価（-1.0～1.0 の感情スコアなど）
     sentiment_score = Column(Float, nullable=False)
 
-    # 使用したAIモデル名やバージョン
-    model_used = Column(String, nullable=False)
+    # AIによるコメント判断理由（スコア設定の理由等）
+    reason = Column(String, nullable=False)
 
     # レコード作成日時
     created_at = Column(DateTime, default=datetime.utcnow)

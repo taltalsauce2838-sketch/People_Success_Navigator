@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
 from ....db.session import get_db
 from ....schemas.pulse_survey import PulseSurveyCreate, PulseSurveyResponse
-from ....crud import crud_pulse_survey
+from ....crud import crud_pulse_survey,crud_survey_analysis
 from ....services.dify_client import DifyClient
 from ....models.pulse_survey import PulseSurvey
 # from ...deps import get_current_user # 認証用
@@ -10,15 +10,18 @@ from ....models.pulse_survey import PulseSurvey
 router = APIRouter()
 dify_client = DifyClient()
 
+import traceback
+
 async def process_dify_analysis(survey_id: int, memo: str, score: int, db: Session):
-    """バックグラウンドで実行されるAI分析タスク"""
     try:
-        if memo: # メモがある場合のみ分析
-            result = await dify_client.run_analysis(survey_id, memo, score)
-            crud_pulse_survey.update_analysis_result(db, survey_id, result)
+        if memo:
+            result = await dify_client.run_analysis(memo, score)
+            crud_survey_analysis.update_analysis_result(db, survey_id, result)
+
     except Exception as e:
-        print(f"Dify Analysis Failed: {e}")
-        # 必要に応じてエラーログをDBに記録
+        print("Dify Analysis Failed")
+        print(e)
+        traceback.print_exc()
 
 @router.post("/", response_model=PulseSurveyResponse)
 def create_pulse_survey(
