@@ -16,3 +16,13 @@ class PulseSurveyResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# サーベイ推移表示用のレスポンススキーマ
+class PulseSurveyTrendResponse(BaseModel):
+    survey_date: date
+    score: int
+    memo: Optional[str]
+
+    class Config:
+        from_attributes = True

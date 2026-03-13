@@ -18,3 +18,13 @@ def update_analysis_result(db: Session, survey_id: int, analysis_data: dict):
     # ここでSurveyAnalysisテーブルへの保存やPulseSurveyのフラグ更新を行う
     # 実装例: analysis = SurveyAnalysis(pulse_survey_id=survey_id, result=analysis_data["outputs"]["text"])
     pass
+
+# 指定ユーザーのサーベイ推移を取得する
+def get_survey_trend_by_user_id(db: Session, user_id: int):
+    return (
+        db.query(PulseSurvey)
+        .filter(PulseSurvey.user_id == user_id)
+        # サーベイ日付順に並べる
+        .order_by(PulseSurvey.survey_date.asc())
+        .all()
+    )
