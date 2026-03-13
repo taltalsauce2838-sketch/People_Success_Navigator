@@ -14,6 +14,23 @@ from ....crud.crud_user import (
     update_user_manager,
 )
 
+# HTTPエラー用
+from fastapi import HTTPException, status
+# サーベイ推移レスポンススキーマ
+from app.schemas.pulse_survey import PulseSurveyTrendResponse
+# サーベイCRUD
+from app.crud import crud_pulse_survey
+# Userモデル
+from app.models.user import User
+# DBセッション
+from sqlalchemy.orm import Session
+# DB取得
+from app.db.session import get_db
+# ログインユーザー取得
+from app.api.deps import get_current_user
+# FastAPI依存関係
+from fastapi import Depends
+
 router = APIRouter()
 
 
