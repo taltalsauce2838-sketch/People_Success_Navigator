@@ -25,3 +25,12 @@ class PulseSurveyDeleteResponse(BaseModel):
     message: str
     deleted_user_id: int
     deleted_survey_date: date
+
+# サーベイ推移表示用のレスポンススキーマ
+class PulseSurveyTrendResponse(BaseModel):
+    survey_date: date
+    score: int
+    memo: Optional[str]
+
+    class Config:
+        from_attributes = True

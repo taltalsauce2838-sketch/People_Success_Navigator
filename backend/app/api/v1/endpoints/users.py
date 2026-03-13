@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session
 # DB取得
 from app.db.session import get_db
 # ログインユーザー取得
-from app.api.deps import get_current_user
+from app.core.security import get_current_user
 # FastAPI依存関係
 from fastapi import Depends
 
