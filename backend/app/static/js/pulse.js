@@ -87,6 +87,7 @@ async function loadUser() {
   try {
     const user = await apiFetch("/users/me", { method: "GET" });
     fillUserUI(user);
+    return user;
   } catch (error) {
     if (error.status === 401) {
       clearToken();
@@ -121,7 +122,7 @@ pulseForm?.addEventListener("submit", async (event) => {
   setMessage("登録中です...", "");
 
   try {
-    await apiFetch(`/pulse/?current_user=1`, {
+    await apiFetch(`/pulse/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

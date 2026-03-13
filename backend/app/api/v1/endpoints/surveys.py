@@ -13,7 +13,7 @@ from ....crud import crud_pulse_survey, crud_survey_analysis
 from ....services.dify_client import DifyClient
 from ....models.pulse_survey import PulseSurvey
 from ....models.user import User
-from ....core.security import get_admin_user
+from ....core.security import get_admin_user, get_current_user
 
 router = APIRouter()
 dify_client = DifyClient()
@@ -37,18 +37,25 @@ def create_pulse_survey(
     *,
     db: Session = Depends(get_db),
     obj_in: PulseSurveyCreate,
-    current_user=1,
+    current_user: User = Depends(get_current_user),
     background_tasks: BackgroundTasks
 ):
     existing = db.query(PulseSurvey).filter(
-        PulseSurvey.user_id == current_user,
+        PulseSurvey.user_id == current_user.id,
         PulseSurvey.survey_date == obj_in.survey_date
     ).first()
 
     if existing:
-        raise HTTPException(status_code=400, detail="本日のサーベイは既に回答済みです")
+        raise HTTPException(
+            status_code=400,
+            detail="本日のサーベイは既に回答済みです"
+        )
 
-    survey = crud_pulse_survey.create_survey(db, obj_in, user_id=current_user)
+    survey = crud_pulse_survey.create_survey(
+        db,
+        obj_in,
+        user_id=current_user.id
+    )
 
     background_tasks.add_task(
         process_dify_analysis,
