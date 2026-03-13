@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>People Success Navigator | Pulse Survey</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="app-body">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark">★</div>
+        <div>
+          <h1>People Success Navigator</h1>
+          <p>エンジニア定着支援プラットフォーム</p>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <section class="profile-panel">
+        <h2 id="sidebarUserName">ユーザー名</h2>
+        <span id="sidebarUserRole" class="role-badge">role</span>
+      </section>
+
+      <nav class="side-nav">
+        <a class="side-nav-link" href="./dashboard.html">マイダッシュボード</a>
+        <a class="side-nav-link active" href="./pulse.html">Pulse Survey</a>
+        <a class="side-nav-link disabled" href="#">成長可視化</a>
+        <a class="side-nav-link disabled" href="#">AI相談</a>
+        <a class="side-nav-link disabled" href="#">マネジメント</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <a class="btn btn-primary btn-block" href="./dashboard.html">ダッシュボードへ戻る</a>
+      </div>
+    </aside>
+
+    <div class="content-shell">
+      <header class="topbar">
+        <nav class="top-nav">
+          <a class="top-nav-link" href="./dashboard.html">ダッシュボード</a>
+          <a class="top-nav-link active" href="./pulse.html">90日モニタリング</a>
+          <a class="top-nav-link disabled" href="#">成長可視化</a>
+          <a class="top-nav-link disabled" href="#">AI相談</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <div class="user-chip">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div>
+              <strong id="headerUserName">ユーザー</strong>
+              <p id="headerUserMeta">role / email</p>
+            </div>
+          </div>
+          <button id="logoutButton" class="btn btn-outline" type="button">ログアウト</button>
+        </div>
+      </header>
+
+      <main class="dashboard-main">
+        <section class="page-head">
+          <div>
+            <h2>Pulse Survey 登録</h2>
+            <p>当日のコンディションを記録し、必要に応じてDify分析まで実行します</p>
+          </div>
+          <div class="head-meta-pill">回答日: <span id="todayLabel">-</span></div>
+        </section>
+
+        <section class="pulse-layout">
+          <article class="dashboard-card pulse-card">
+            <div class="section-head">
+              <div>
+                <h3>本日の回答</h3>
+                <p class="muted-text">スコアとメモを入力して登録してください</p>
+              </div>
+            </div>
+
+            <form id="pulseForm" class="pulse-form">
+              <div class="form-group">
+                <label for="surveyDate">回答日</label>
+                <input id="surveyDate" name="surveyDate" type="text" readonly />
+              </div>
+
+              <div class="form-group">
+                <label for="score">今日のコンディション</label>
+                <select id="score" name="score" required>
+                  <option value="">選択してください</option>
+                  <option value="1">1 - とても悪い</option>
+                  <option value="2">2 - 悪い</option>
+                  <option value="3">3 - 普通</option>
+                  <option value="4">4 - 良い</option>
+                  <option value="5">5 - とても良い</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="memo">一言メモ（任意）</label>
+                <textarea id="memo" name="memo" rows="6" placeholder="今日の気分や気になっていることを記入してください"></textarea>
+              </div>
+
+              <p id="pulseMessage" class="form-message" aria-live="polite"></p>
+
+              <div class="pulse-actions">
+                <button id="pulseSubmitButton" class="btn btn-primary" type="submit">登録する</button>
+                <button id="pulseResetButton" class="btn btn-outline" type="button">入力をクリア</button>
+              </div>
+            </form>
+          </article>
+
+          <aside class="pulse-side-stack">
+            <article class="dashboard-card info-panel-card">
+              <div class="section-head">
+                <h3>登録ガイド</h3>
+              </div>
+              <ul class="guide-list">
+                <li>回答日は当日固定です。</li>
+                <li>1日1回まで登録できます。</li>
+                <li>メモを入力すると、登録後に分析処理が走る想定です。</li>
+              </ul>
+            </article>
+
+            <article class="dashboard-card info-panel-card">
+              <div class="section-head">
+                <h3>ログイン情報</h3>
+              </div>
+              <dl class="info-list compact">
+                <div>
+                  <dt>ユーザーID</dt>
+                  <dd id="cardUserId">-</dd>
+                </div>
+                <div>
+                  <dt>権限</dt>
+                  <dd id="cardRole">-</dd>
+                </div>
+                <div>
+                  <dt>部署</dt>
+                  <dd id="cardDepartment">-</dd>
+                </div>
+              </dl>
+            </article>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="./js/pulse.js"></script>
+</body>
+</html>

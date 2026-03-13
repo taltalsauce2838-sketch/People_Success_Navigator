@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from ....core.security import get_admin_user
+from ....core.security import get_admin_user, get_current_user
 from ....db.session import get_db
 from ....models.user import User
 from ....schemas.user import UserCreate, UserResponse, RoleUpdate, DepartmentUpdate, ManagerUpdate
@@ -72,3 +72,12 @@ def update_manager_api(
     admin_user: User = Depends(get_admin_user),
 ):
     return update_user_manager(db, user_id, data)
+
+@router.get("/me", response_model=UserResponse)
+def get_me(
+    current_user: User = Depends(get_current_user),
+):
+    """
+    ログイン中ユーザーの情報取得
+    """
+    return current_user

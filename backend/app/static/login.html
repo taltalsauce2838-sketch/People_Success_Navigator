@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>People Success Navigator | ログイン</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="auth-body">
+  <div class="auth-shell">
+    <aside class="auth-side auth-side-left"></aside>
+
+    <main class="auth-main">
+      <section class="auth-card">
+        <div class="auth-logo-wrap">
+          <div class="auth-logo">PSN</div>
+        </div>
+
+        <h1 class="auth-title">People Success Navigator</h1>
+        <p class="auth-subtitle">ログインして続行してください</p>
+
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="email">メールアドレス</label>
+            <input id="email" name="email" type="email" placeholder="メールアドレスを入力してください" autocomplete="username" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">パスワード</label>
+            <input id="password" name="password" type="password" placeholder="パスワードを入力してください" autocomplete="current-password" required />
+          </div>
+
+          <p id="loginMessage" class="form-message" aria-live="polite"></p>
+
+          <button id="loginButton" class="btn btn-primary btn-block" type="submit">ログイン</button>
+          <button class="btn btn-secondary btn-block" type="button" disabled>サインアップ（準備中）</button>
+        </form>
+
+        <section class="info-card">
+          <div class="info-icon">i</div>
+          <div>
+            <h2>ログイン情報について</h2>
+            <p>
+              ログイン後はマイダッシュボードに移動します。将来的に権限ごとの画面分岐にも対応しやすい構成にしてあります。
+            </p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <aside class="auth-side auth-side-right"></aside>
+  </div>
+
+  <script type="module" src="./js/auth.js"></script>
+</body>
+</html>
