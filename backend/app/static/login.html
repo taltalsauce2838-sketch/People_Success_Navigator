@@ -1,55 +1,72 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <title>People Success Navigator | Login</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>People Success Navigator | ログイン</title>
   <link rel="stylesheet" href="./css/style.css" />
 </head>
-<body class="auth-body">
-  <div class="auth-shell">
-    <aside class="auth-side auth-side-left"></aside>
+<body class="login-page">
+  <div class="login-side"></div>
 
-    <main class="auth-main">
-      <section class="auth-card">
-        <div class="auth-logo-wrap">
-          <div class="auth-logo">PSN</div>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="brand-mark"></div>
+      <h1 class="login-title">People Success Navigator</h1>
+      <p class="login-subtitle">ログインして続行してください</p>
+
+      <form id="loginForm">
+        <div class="field-group">
+          <label for="email">ユーザーID</label>
+          <input
+            class="input"
+            id="email"
+            type="text"
+            placeholder="ユーザーIDを入力してください"
+            autocomplete="username"
+          />
         </div>
 
-        <h1 class="auth-title">People Success Navigator</h1>
-        <p class="auth-subtitle">ログインして続行してください</p>
+        <div class="field-group">
+          <label for="password">パスワード</label>
+          <input
+            class="input"
+            id="password"
+            type="password"
+            placeholder="パスワードを入力してください"
+            autocomplete="current-password"
+          />
+        </div>
 
-        <form id="loginForm" class="auth-form">
-          <div class="form-group">
-            <label for="email">メールアドレス</label>
-            <input id="email" name="email" type="email" placeholder="メールアドレスを入力してください" autocomplete="username" required />
-          </div>
+        <div id="loginMessage" class="form-message" aria-live="polite"></div>
 
-          <div class="form-group">
-            <label for="password">パスワード</label>
-            <input id="password" name="password" type="password" placeholder="パスワードを入力してください" autocomplete="current-password" required />
-          </div>
+        <div class="btn-row">
+          <button
+            id="loginButton"
+            type="submit"
+            class="btn btn-primary btn-block"
+          >
+            ログイン
+          </button>
+        </div>
+      </form>
 
-          <p id="loginMessage" class="form-message" aria-live="polite"></p>
+      <div class="info-box">
+        <h4>ログイン情報について</h4>
+        <p>
+          ユーザーIDに基づいて、人事部門・マネージャーは管理系ダッシュボード、
+          エンジニアはエンジニア向けダッシュボードへ遷移する想定です。
+          今回のHTMLは画面骨格の試作です。
+        </p>
+      </div>
 
-          <button id="loginButton" class="btn btn-primary btn-block" type="submit">ログイン</button>
-          <button class="btn btn-secondary btn-block" type="button" disabled>サインアップ（準備中）</button>
-        </form>
+      <div class="login-footer-note">
+        認証連携・権限分岐はバックエンド実装に合わせて接続予定です。
+      </div>
+    </section>
+  </main>
 
-        <section class="info-card">
-          <div class="info-icon">i</div>
-          <div>
-            <h2>ログイン情報について</h2>
-            <p>
-              ログイン後はマイダッシュボードに移動します。将来的に権限ごとの画面分岐にも対応しやすい構成にしてあります。
-            </p>
-          </div>
-        </section>
-      </section>
-    </main>
-
-    <aside class="auth-side auth-side-right"></aside>
-  </div>
+  <div class="login-side"></div>
 
   <script type="module" src="./js/auth.js"></script>
 </body>

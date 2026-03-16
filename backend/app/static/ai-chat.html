@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>AI Chat</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">山</div>
+      <h3>山田 健太</h3>
+      <div class="role-badge">User</div>
+      <div class="footer-note">プロダクト開発部</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-user.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="active">AI相談</a>
+<a href="./referral.html" class="">リファラル</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="active">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">User</div>
+        <div class="user-chip">
+          <div class="avatar">山</div>
+          <div>
+            <div><strong>山田 健太</strong></div>
+            <div class="card-sub">プロダクト開発部</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>AI一次相談チャット</h2>
+          <p>24時間対応の相談窓口の画面イメージです。履歴確認は本人のみ閲覧想定です。</p>
+        </div>
+      </section>
+      
+<div class="chat-layout">
+  <aside class="card chat-history">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><h3>相談履歴</h3><span class="upcoming">初期実装対象外</span></div>
+    <a class="card" href="#"><strong>2026/03/13 09:40</strong><div class="card-sub">配属後のキャッチアップについて相談</div></a>
+    <a class="card" href="#"><strong>2026/03/10 22:15</strong><div class="card-sub">業務量の偏りについて相談</div></a>
+    <p class="footer-note">この画面はUI枠のみ作成しています。実際のチャット接続・履歴保存は後続実装予定です。</p>
+  </aside>
+  <section class="card chat-thread">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><h3>AI一次相談チャット</h3><span class="upcoming">実装予定</span></div>
+    <div class="bubble ai">こんにちは。まずは今の状況を教えてください。相談内容に応じて一次整理を行います。</div>
+    <div class="bubble user">最近、タスクの優先度が重なって少し負荷が高いです。</div>
+    <div class="bubble ai">ありがとうございます。業務量・優先順位・相談先の3点を整理すると、次のアクションに繋げやすくなります。</div>
+    <div style="margin-top:auto;display:flex;gap:12px;">
+      <input class="input" placeholder="相談内容を入力（UIモック）" />
+      <button class="btn btn-primary" type="button">送信</button>
+    </div>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

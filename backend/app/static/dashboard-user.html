@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>User Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">山</div>
+      <h3>山田 健太</h3>
+      <div class="role-badge">User</div>
+      <div class="footer-note">プロダクト開発部</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-user.html" class="active">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="active">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">User</div>
+        <div class="user-chip">
+          <div class="avatar">山</div>
+          <div>
+            <div><strong>山田 健太</strong></div>
+            <div class="card-sub">プロダクト開発部</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>マイダッシュボード</h2>
+          <p>一般エンジニア向け。主要機能のサムネイルと導線を表示します。</p>
+        </div>
+      </section>
+      
+<div class="grid-3">
+  <article class="card thumbnail-card"><div><h3>今日の Pulse Survey</h3><p class="card-sub">5段階評価と一言メモ。日報統合を想定した入力導線です。</p><div class="chip-row"><span class="chip success">本日未回答</span></div></div><a class="btn btn-primary" href="./pulse.html">入力画面へ</a></article>
+  <article class="card thumbnail-card"><div><h3>スキル成長グラフ</h3><p class="card-sub">現在の習熟度と学習進捗を確認するためのサムネイルです。</p></div><a class="btn btn-primary" href="./skills.html">詳細を見る</a></article>
+  <article class="card thumbnail-card"><div><h3>AI一次相談チャット</h3><p class="card-sub">24時間対応の相談窓口。履歴確認は本人のみ閲覧可能想定です。</p><div class="chip-row"><span class="upcoming">初期実装対象外 / UI枠のみ</span></div></div><a class="btn btn-primary" href="./ai-chat.html">画面を見る</a></article>
+</div>
+<div class="grid-2" style="margin-top:20px;">
+  <article class="card">
+    <h3>最近のコンディション</h3><p class="card-sub">直近7日分のサムネイル表示</p><div class="placeholder-chart"></div>
+  </article>
+  <article class="card">
+    <h3>リファラル・知人紹介</h3><p class="card-sub">軽量な連携を想定したリンク・応募フォームの導線です。</p><div class="chip-row"><span class="chip success">紹介リンク掲載</span><span class="chip warning">フォーム準備中</span></div><div style="margin-top:20px;"><a class="btn btn-primary" href="./referral.html">紹介画面へ</a></div></article>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

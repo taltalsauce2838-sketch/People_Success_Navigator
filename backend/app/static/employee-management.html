@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Employee Management</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">佐</div>
+      <h3>佐藤 美咲</h3>
+      <div class="role-badge">Admin</div>
+      <div class="footer-note">人事部 / 管理者</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-admin.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a>
+<a href="./team-overview.html" class="">チーム状況</a>
+<a href="./member-detail.html" class="">メンバー詳細</a>
+<a href="./company-analytics.html" class="">全社分析</a>
+<a href="./employee-management.html" class="active">社員管理</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="active">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">Admin</div>
+        <div class="user-chip">
+          <div class="avatar">佐</div>
+          <div>
+            <div><strong>佐藤 美咲</strong></div>
+            <div class="card-sub">人事部 / 管理者</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>社員管理</h2>
+          <p>新規登録・削除・権限/所属/マネージャー変更を行う管理パネルです。</p>
+        </div>
+      </section>
+      
+<div class="grid-2">
+  <section class="card">
+    <h3>社員一覧</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>氏名</th><th>権限</th><th>所属</th><th>マネージャー</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>山田 健太</td><td>User</td><td>開発1部</td><td>田中 太郎</td><td>編集 / 削除</td></tr>
+          <tr><td>2</td><td>鈴木 花子</td><td>Manager</td><td>開発2部</td><td>-</td><td>編集 / 削除</td></tr>
+          <tr><td>3</td><td>佐藤 美咲</td><td>Admin</td><td>人事部</td><td>-</td><td>編集 / 削除</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="card">
+    <h3>編集フォーム</h3>
+    <div class="form-grid">
+      <div><label>氏名</label><input class="input" placeholder="氏名" /></div>
+      <div><label>メールアドレス</label><input class="input" placeholder="mail@example.com" /></div>
+      <div><label>権限</label><select class="select"><option>User</option><option>Manager</option><option>Admin</option></select></div>
+      <div><label>所属</label><input class="input" placeholder="部署名" /></div>
+      <div><label>対象マネージャー</label><input class="input" placeholder="マネージャー名" /></div>
+      <div><label>入社日</label><input class="input" placeholder="2026-04-01" /></div>
+    </div>
+    <div class="btn-row" style="margin-top:18px;"><button class="btn btn-primary" type="button">保存する</button><button class="btn btn-secondary" type="button">新規登録</button></div>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

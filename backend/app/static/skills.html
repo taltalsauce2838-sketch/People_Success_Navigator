@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Skills</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">山</div>
+      <h3>山田 健太</h3>
+      <div class="role-badge">User</div>
+      <div class="footer-note">プロダクト開発部</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-user.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="active">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="active">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">User</div>
+        <div class="user-chip">
+          <div class="avatar">山</div>
+          <div>
+            <div><strong>山田 健太</strong></div>
+            <div class="card-sub">プロダクト開発部</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>スキル成長</h2>
+          <p>個人のスキル習熟度と成長推移を確認する画面です。</p>
+        </div>
+      </section>
+      
+<div class="grid-2">
+  <section class="card">
+    <h3>スキル成長グラフ</h3>
+    <p class="card-sub">現状の習熟度・成長推移を可視化するための表示領域です。</p>
+    <div class="placeholder-chart"></div>
+  </section>
+  <section class="card">
+    <h3>スキルサマリー</h3>
+    <table>
+      <thead><tr><th>スキル</th><th>現在Lv</th><th>前回比</th></tr></thead>
+      <tbody>
+        <tr><td>React</td><td>Lv.2</td><td>+1</td></tr>
+        <tr><td>FastAPI</td><td>Lv.2</td><td>+1</td></tr>
+        <tr><td>SQL</td><td>Lv.1</td><td>±0</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

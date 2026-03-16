@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Referral</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">山</div>
+      <h3>山田 健太</h3>
+      <div class="role-badge">User</div>
+      <div class="footer-note">プロダクト開発部</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-user.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="active">リファラル</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="active">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">User</div>
+        <div class="user-chip">
+          <div class="avatar">山</div>
+          <div>
+            <div><strong>山田 健太</strong></div>
+            <div class="card-sub">プロダクト開発部</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>リファラル応募・知人紹介</h2>
+          <p>軽量な紹介導線とフォームのUIイメージです。</p>
+        </div>
+      </section>
+      
+<div class="grid-2">
+  <section class="card">
+    <h3>リファラル応募・知人紹介</h3>
+    <p class="card-sub">紹介制度の説明と、軽量フォームまたは外部リンク連携を置く想定です。</p>
+    <div class="chip-row"><span class="chip success">紹介制度の説明</span><span class="chip warning">応募フォーム簡略化</span></div>
+    <div style="margin-top:18px;"><a class="btn btn-primary" href="#">募集要項を見る</a></div>
+  </section>
+  <section class="card">
+    <h3>紹介フォーム（簡易）</h3>
+    <div class="form-grid">
+      <div><label>紹介者名</label><input class="input" placeholder="氏名" /></div>
+      <div><label>関係性</label><input class="input" placeholder="元同僚 / 友人 など" /></div>
+      <div class="full"><label>補足コメント</label><textarea class="textarea" placeholder="紹介したい理由や補足"></textarea></div>
+    </div>
+    <div class="btn-row" style="margin-top:18px;"><button class="btn btn-primary" type="button">送信する</button></div>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

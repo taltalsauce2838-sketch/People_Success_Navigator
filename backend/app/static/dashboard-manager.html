@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Manager Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">田</div>
+      <h3>田中 太郎</h3>
+      <div class="role-badge">Manager</div>
+      <div class="footer-note">開発1部 マネージャー</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-manager.html" class="active">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a>
+<a href="./team-overview.html" class="">チーム状況</a>
+<a href="./member-detail.html" class="">メンバー詳細</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
+<a href="./dashboard-manager.html" class="active">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">Manager</div>
+        <div class="user-chip">
+          <div class="avatar">田</div>
+          <div>
+            <div><strong>田中 太郎</strong></div>
+            <div class="card-sub">開発1部 マネージャー</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>マイダッシュボード</h2>
+          <p>マネージャー向け。チーム状況の把握とメンバー詳細導線を追加しています。</p>
+        </div>
+      </section>
+      
+<div class="grid-3">
+  <article class="card"><h3>チーム離職リスク</h3><p class="card-sub">高・中・低でAI判定したアラートをサムネイル表示します。</p><div class="kpi">3</div><div class="chip-row"><span class="chip danger">高 1</span><span class="chip warning">中 2</span><span class="chip success">低 6</span></div></article>
+  <article class="card"><h3>チーム健康状態</h3><p class="card-sub">チーム全体の健康状態推移の簡易表示</p><div class="placeholder-chart"></div></article>
+  <article class="card thumbnail-card"><div><h3>チーム状況一覧</h3><p class="card-sub">所属メンバーの状態一覧と詳細画面への遷移導線です。</p></div><a class="btn btn-primary" href="./team-overview.html">一覧を見る</a></article>
+</div>
+<div class="grid-2" style="margin-top:20px;">
+  <article class="card"><h3>直近の介入メモ</h3><div class="timeline"><div class="timeline-item"><strong>田中 一郎</strong><div class="card-sub">面談予定を来週に設定</div></div><div class="timeline-item"><strong>鈴木 花子</strong><div class="card-sub">チャットで一次フォロー済み</div></div></div></article>
+  <article class="card"><h3>一般機能への導線</h3><p class="card-sub">Pulse Survey、スキル、AI相談、リファラルは一般エンジニア向け機能と同じデザインルールで利用します。</p><div class="chip-row"><span class="chip success">共通レイアウト採用</span></div></article>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>
