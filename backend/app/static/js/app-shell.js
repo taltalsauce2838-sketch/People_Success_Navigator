@@ -215,6 +215,7 @@ function renderTopbar(role, user) {
           <div class="card-sub">${escapeHtml(department)}</div>
         </div>
       </div>
+      <button class="btn btn-primary btn-topbar-logout logout-button" type="button">ログアウト</button>
     </div>
   `;
 }
@@ -236,6 +237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!ensureAuthorizedPage(user.role)) return;
     renderSidebar(user.role, user);
     renderTopbar(user.role, user);
+    bindLogout();
   } catch (error) {
     clearToken();
     window.location.href = "./login.html";
