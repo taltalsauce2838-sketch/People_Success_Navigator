@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Company Analytics</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">佐</div>
+      <h3>佐藤 美咲</h3>
+      <div class="role-badge">Admin</div>
+      <div class="footer-note">人事部 / 管理者</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-admin.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a>
+<a href="./team-overview.html" class="">チーム状況</a>
+<a href="./member-detail.html" class="">メンバー詳細</a>
+<a href="./company-analytics.html" class="active">全社分析</a>
+<a href="./employee-management.html" class="">社員管理</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
+<a href="./dashboard-manager.html" class="">マネージャー</a>
+<a href="./dashboard-admin.html" class="active">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">Admin</div>
+        <div class="user-chip">
+          <div class="avatar">佐</div>
+          <div>
+            <div><strong>佐藤 美咲</strong></div>
+            <div class="card-sub">人事部 / 管理者</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>全社分析パネル</h2>
+          <p>全社の離職トレンド、健康状態、コスト削減インパクトを確認する画面です。</p>
+        </div>
+      </section>
+      
+<div class="grid-3">
+  <section class="card"><h3>改善率シミュレーション</h3><div class="kpi">12%</div><div class="card-sub">改善時の離職率想定</div></section>
+  <section class="card"><h3>削減額インパクト</h3><div class="kpi">1.8</div><div class="card-sub">億円 / 年</div></section>
+  <section class="card"><h3>高リスク人数</h3><div class="kpi">5</div><div class="card-sub">全社員対象</div></section>
+</div>
+<div class="grid-2" style="margin-top:20px;">
+  <section class="card"><h3>全社的な離職トレンド</h3><div class="placeholder-chart"></div></section>
+  <section class="card"><h3>組織別の健康状態比較</h3><div class="placeholder-chart"></div></section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

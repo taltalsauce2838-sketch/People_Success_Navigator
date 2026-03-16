@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Member Detail</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">田</div>
+      <h3>田中 太郎</h3>
+      <div class="role-badge">Manager</div>
+      <div class="footer-note">開発1部 マネージャー</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-manager.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a>
+<a href="./team-overview.html" class="active">チーム状況</a>
+<a href="./member-detail.html" class="">メンバー詳細</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
+<a href="./dashboard-manager.html" class="active">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">Manager</div>
+        <div class="user-chip">
+          <div class="avatar">田</div>
+          <div>
+            <div><strong>田中 太郎</strong></div>
+            <div class="card-sub">開発1部 マネージャー</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>メンバー詳細ページ</h2>
+          <p>個人の推移確認と介入メモ入力を行う詳細画面です。</p>
+        </div>
+      </section>
+      
+<div class="grid-2">
+  <section class="card">
+    <h3>個別タイムライン</h3>
+    <p class="card-sub">日次サーベイ推移とAI相談の感情分析結果を時系列で確認する想定です。</p>
+    <div class="timeline" style="margin-top:18px;">
+      <div class="timeline-item"><strong>03/13</strong><div class="card-sub">Pulse Survey 3 / AI補正 +1 / final 4</div></div>
+      <div class="timeline-item"><strong>03/12</strong><div class="card-sub">相談チャットで負荷感を検知 / マネージャー確認推奨</div></div>
+      <div class="timeline-item"><strong>03/11</strong><div class="card-sub">Pulse Survey 2 / AI補正 0 / final 2</div></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>介入メモ</h3>
+    <p class="card-sub">面談、チャット、電話でのフォロー履歴を記録する欄です。</p>
+    <div class="form-grid">
+      <div><label>実施日</label><input class="input" value="2026-03-13" /></div>
+      <div><label>対応種別</label><select class="select"><option>面談</option><option>チャット</option><option>電話</option></select></div>
+      <div class="full"><label>メモ</label><textarea class="textarea" placeholder="対応内容を記録"></textarea></div>
+    </div>
+    <div class="btn-row" style="margin-top:18px;"><button class="btn btn-primary" type="button">保存する</button></div>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

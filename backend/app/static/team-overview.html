@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>Team Overview</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo-block">
+      <div class="logo-icon">★</div>
+      <div class="logo-text">
+        <h1>People Success Navigator</h1>
+        <p>エンジニア定着支援プラットフォーム</p>
+      </div>
+    </div>
+    <section class="sidebar-profile">
+      <div class="avatar">田</div>
+      <h3>田中 太郎</h3>
+      <div class="role-badge">Manager</div>
+      <div class="footer-note">開発1部 マネージャー</div>
+    </section>
+    <div>
+      <div class="nav-label">Sidebar</div>
+      <nav class="side-nav"><a href="./dashboard-manager.html" class="">ダッシュボード</a>
+<a href="./pulse.html" class="">Pulse Survey</a>
+<a href="./skills.html" class="">スキル成長</a>
+<a href="./ai-chat.html" class="">AI相談</a>
+<a href="./referral.html" class="">リファラル</a>
+<a href="./team-overview.html" class="active">チーム状況</a>
+<a href="./member-detail.html" class="">メンバー詳細</a></nav>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
+    </div>
+  </aside>
+  <div class="content-shell">
+    <header class="topbar">
+      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
+<a href="./dashboard-manager.html" class="active">マネージャー</a>
+<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-right">
+        <div class="role-badge">Manager</div>
+        <div class="user-chip">
+          <div class="avatar">田</div>
+          <div>
+            <div><strong>田中 太郎</strong></div>
+            <div class="card-sub">開発1部 マネージャー</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <section class="page-header">
+        <div>
+          <h2>チーム状況一覧</h2>
+          <p>所属メンバーの状態一覧と健康状態推移を確認する画面です。</p>
+        </div>
+      </section>
+      
+<div class="grid-2">
+  <section class="card">
+    <h3>チーム状況一覧</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>氏名</th><th>役割</th><th>離職リスク</th><th>最新スコア</th><th>詳細</th></tr></thead>
+        <tbody>
+          <tr><td>山田 健太</td><td>User</td><td><span class="chip success">低</span></td><td>4</td><td><a href="./member-detail.html">詳細へ</a></td></tr>
+          <tr><td>鈴木 花子</td><td>User</td><td><span class="chip warning">中</span></td><td>3</td><td><a href="./member-detail.html">詳細へ</a></td></tr>
+          <tr><td>田辺 一郎</td><td>User</td><td><span class="chip danger">高</span></td><td>2</td><td><a href="./member-detail.html">詳細へ</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="card">
+    <h3>チーム全体の健康状態推移</h3>
+    <div class="placeholder-chart"></div>
+  </section>
+</div>
+
+    </main>
+  </div>
+</div>
+  <script type="module" src="./js/app-shell.js"></script>
+</body>
+</html>

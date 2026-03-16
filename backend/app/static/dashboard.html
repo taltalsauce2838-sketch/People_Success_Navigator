@@ -3,143 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>People Success Navigator | マイダッシュボード</title>
+  <title>Redirecting...</title>
   <link rel="stylesheet" href="./css/style.css" />
 </head>
-<body class="app-body">
-  <div class="app-layout">
-    <aside class="sidebar">
-      <div class="brand-block">
-        <div class="brand-mark">★</div>
-        <div>
-          <h1>People Success Navigator</h1>
-          <p>エンジニア定着支援プラットフォーム</p>
-        </div>
-      </div>
-
-      <div class="sidebar-divider"></div>
-
-      <section class="profile-panel">
-        <h2 id="sidebarUserName">ユーザー名</h2>
-        <span id="sidebarUserRole" class="role-badge">role</span>
-      </section>
-
-      <nav class="side-nav">
-        <a class="side-nav-link active" href="./dashboard.html">マイダッシュボード</a>
-        <a class="side-nav-link" href="./pulse.html">Pulse Survey</a>
-        <a class="side-nav-link disabled" href="#">成長可視化</a>
-        <a class="side-nav-link disabled" href="#">AI相談</a>
-        <a class="side-nav-link disabled" href="#">マネジメント</a>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <a class="btn btn-primary btn-block" href="./pulse.html">Pulse Surveyを入力</a>
-      </div>
-    </aside>
-
-    <div class="content-shell">
-      <header class="topbar">
-        <nav class="top-nav">
-          <a class="top-nav-link active" href="./dashboard.html">ダッシュボード</a>
-          <a class="top-nav-link" href="./pulse.html">90日モニタリング</a>
-          <a class="top-nav-link disabled" href="#">成長可視化</a>
-          <a class="top-nav-link disabled" href="#">AI相談</a>
-        </nav>
-
-        <div class="topbar-actions">
-          <div class="user-chip">
-            <div class="user-avatar" id="userAvatar">U</div>
-            <div>
-              <strong id="headerUserName">ユーザー</strong>
-              <p id="headerUserMeta">role / email</p>
-            </div>
-          </div>
-          <button id="logoutButton" class="btn btn-outline" type="button">ログアウト</button>
-        </div>
-      </header>
-
-      <main class="dashboard-main">
-        <section class="page-head">
-          <div>
-            <h2>マイダッシュボード</h2>
-            <p>あなたの健康状態・エンゲージメント・今後のアクションを確認できます</p>
-          </div>
-          <a class="btn btn-primary" href="./pulse.html">今日のPulse Surveyへ</a>
-        </section>
-
-        <p id="dashboardMessage" class="form-message" aria-live="polite"></p>
-
-        <section class="card-grid">
-          <article class="dashboard-card metric-card">
-            <div class="card-icon soft-blue">❤</div>
-            <p class="metric-label">ログインユーザー</p>
-            <h3 id="cardName">-</h3>
-            <p id="cardEmail" class="muted-text">-</p>
-          </article>
-
-          <article class="dashboard-card metric-card">
-            <div class="card-icon soft-navy">↗</div>
-            <p class="metric-label">ロール</p>
-            <h3 id="cardRole">-</h3>
-            <p class="muted-text">ログイン権限</p>
-          </article>
-
-          <article class="dashboard-card metric-card">
-            <div class="card-icon soft-gray">🏢</div>
-            <p class="metric-label">部署</p>
-            <h3 id="cardDepartment">-</h3>
-            <p class="muted-text">department_idベース</p>
-          </article>
-        </section>
-
-        <section class="dashboard-panels">
-          <article class="dashboard-card large-card">
-            <div class="section-head">
-              <div>
-                <h3>クイックアクション</h3>
-                <p class="muted-text">最初に必要な導線をまとめています</p>
-              </div>
-            </div>
-            <div class="action-list">
-              <a class="action-tile" href="./pulse.html">
-                <strong>Pulse Survey を登録する</strong>
-                <span>本日のコンディション入力画面へ移動</span>
-              </a>
-              <button class="action-tile" type="button" disabled>
-                <strong>AI相談を開始する</strong>
-                <span>将来的にDify連携画面を追加予定</span>
-              </button>
-              <button class="action-tile" type="button" disabled>
-                <strong>成長可視化を確認する</strong>
-                <span>スキル・履歴・変化の表示枠</span>
-              </button>
-            </div>
-          </article>
-
-          <article class="dashboard-card side-card">
-            <div class="section-head">
-              <h3>認証状態</h3>
-            </div>
-            <dl class="info-list">
-              <div>
-                <dt>トークン状態</dt>
-                <dd id="tokenState">確認中</dd>
-              </div>
-              <div>
-                <dt>ユーザーID</dt>
-                <dd id="cardUserId">-</dd>
-              </div>
-              <div>
-                <dt>入社日</dt>
-                <dd id="cardJoinedAt">-</dd>
-              </div>
-            </dl>
-          </article>
-        </section>
-      </main>
-    </div>
-  </div>
-
-  <script type="module" src="./js/dashboard.js"></script>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-card">
+      <h1 class="login-title">権限に応じたダッシュボードへ移動します</h1>
+      <p class="login-subtitle">旧 dashboard.html は廃止し、ログイン後は権限別ダッシュボードへ直接遷移する構成に変更しました。</p>
+      <div id="loginMessage" class="form-message" aria-live="polite">遷移中です...</div>
+      <div class="btn-row"><a class="btn btn-secondary btn-block" href="./login.html">ログイン画面へ戻る</a></div>
+    </section>
+  </main>
+  <script type="module" src="./js/auth.js"></script>
 </body>
 </html>
