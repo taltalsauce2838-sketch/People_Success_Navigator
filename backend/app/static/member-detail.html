@@ -55,26 +55,25 @@
     <main class="main">
       <section class="page-header">
         <div>
-          <h2>メンバー詳細ページ</h2>
-          <p>個人の推移確認と介入メモ入力を行う詳細画面です。</p>
+          <h2 id="member-page-title">メンバー詳細ページ</h2>
+          <p id="member-page-subtitle">個人の推移確認と介入メモ入力を行う詳細画面です。</p>
         </div>
       </section>
       
+<div class="btn-row" style="margin-bottom: 16px;"><a id="member-back-link" class="btn btn-secondary" href="./team-overview.html">チーム状況へ戻る</a></div>
+<div class="card" id="member-summary" style="margin-bottom:16px;"></div>
 <div class="grid-2">
   <section class="card">
-    <h3>個別タイムライン</h3>
-    <p class="card-sub">日次サーベイ推移とAI相談の感情分析結果を時系列で確認する想定です。</p>
-    <div class="timeline" style="margin-top:18px;">
-      <div class="timeline-item"><strong>03/13</strong><div class="card-sub">Pulse Survey 3 / AI補正 +1 / final 4</div></div>
-      <div class="timeline-item"><strong>03/12</strong><div class="card-sub">相談チャットで負荷感を検知 / マネージャー確認推奨</div></div>
-      <div class="timeline-item"><strong>03/11</strong><div class="card-sub">Pulse Survey 2 / AI補正 0 / final 2</div></div>
-    </div>
+    <h3><span id="member-name">対象メンバー</span> のPulse履歴</h3>
+    <p class="card-sub">Pulse Surveyの回答履歴を新しい順で表示します。</p>
+    <div id="member-pulse-status" class="card-sub" style="margin-top:12px;">履歴を読み込み中です…</div>
+    <div id="member-timeline" class="timeline" style="margin-top:18px;"></div>
   </section>
   <section class="card">
     <h3>介入メモ</h3>
     <p class="card-sub">面談、チャット、電話でのフォロー履歴を記録する欄です。</p>
     <div class="form-grid">
-      <div><label>実施日</label><input class="input" value="2026-03-13" /></div>
+      <div><label>実施日</label><input id="intervention-date" class="input" value="" /></div>
       <div><label>対応種別</label><select class="select"><option>面談</option><option>チャット</option><option>電話</option></select></div>
       <div class="full"><label>メモ</label><textarea class="textarea" placeholder="対応内容を記録"></textarea></div>
     </div>
@@ -86,5 +85,6 @@
   </div>
 </div>
   <script type="module" src="./js/app-shell.js"></script>
+  <script src="./js/member-detail.js"></script>
 </body>
 </html>

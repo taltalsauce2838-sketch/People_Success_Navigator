@@ -289,3 +289,10 @@ th { color: var(--muted); font-size: 13px; }
     grid-template-columns: 1fr;
   }
 }
+
+
+.detail-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+}

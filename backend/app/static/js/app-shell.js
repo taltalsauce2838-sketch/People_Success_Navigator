@@ -15,8 +15,7 @@ const NAV_ITEMS = {
     { href: "./ai-chat.html", label: "AI相談" },
     { href: "./referral.html", label: "リファラル" },
     { href: "./team-overview.html", label: "チーム状況" },
-    { href: "./member-detail.html", label: "メンバー詳細" },
-  ],
+      ],
   admin: [
     { href: "./dashboard-admin.html", label: "ダッシュボード" },
     { href: "./pulse.html", label: "Pulse Survey" },
@@ -24,18 +23,22 @@ const NAV_ITEMS = {
     { href: "./ai-chat.html", label: "AI相談" },
     { href: "./referral.html", label: "リファラル" },
     { href: "./team-overview.html", label: "チーム状況" },
-    { href: "./member-detail.html", label: "メンバー詳細" },
-    { href: "./company-analytics.html", label: "全社分析" },
+        { href: "./company-analytics.html", label: "全社分析" },
     { href: "./employee-management.html", label: "社員管理" },
   ],
 };
 
-const ACCESS_RULES = Object.fromEntries(
-  Object.entries(NAV_ITEMS).map(([role, items]) => [
-    role,
-    items.map((item) => item.href.replace("./", "")),
-  ])
-);
+const ACCESS_RULES = {
+  user: (NAV_ITEMS.user || []).map((item) => item.href.replace("./", "")),
+  manager: [
+    ...(NAV_ITEMS.manager || []).map((item) => item.href.replace("./", "")),
+    "member-detail.html",
+  ],
+  admin: [
+    ...(NAV_ITEMS.admin || []).map((item) => item.href.replace("./", "")),
+    "member-detail.html",
+  ],
+};
 
 const ROLE_LABELS = {
   user: "User",
