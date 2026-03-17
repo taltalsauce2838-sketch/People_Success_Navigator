@@ -48,8 +48,16 @@ async def main() -> None:
                 manager_id=manager_id,
                 days=args.days,
                 end_survey_date=target_date,
+                execution_type="batch",
             )
             results.append(result)
+            print({
+                "manager_id": manager_id,
+                "generated_count": result.get("generated_count", 0),
+                "survey_start_date": result.get("survey_start_date"),
+                "survey_end_date": result.get("survey_end_date"),
+                "execution_type": result.get("execution_type"),
+            })
 
         generated_total = sum(result.get("generated_count", 0) for result in results)
         print({
@@ -58,6 +66,7 @@ async def main() -> None:
             "days": args.days,
             "manager_count": len(manager_ids),
             "generated_total": generated_total,
+            "execution_type": "batch",
         })
     finally:
         db.close()
