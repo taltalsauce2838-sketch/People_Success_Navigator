@@ -17,82 +17,257 @@
       </div>
     </div>
     <section class="sidebar-profile">
-      <div class="avatar">佐</div>
-      <h3>佐藤 美咲</h3>
+      <div class="avatar">A</div>
+      <h3>Admin User</h3>
       <div class="role-badge">Admin</div>
-      <div class="footer-note">人事部 / 管理者</div>
+      <div class="footer-note">管理者</div>
     </section>
     <div>
       <div class="nav-label">Sidebar</div>
-      <nav class="side-nav"><a href="./dashboard-admin.html" class="">ダッシュボード</a>
-<a href="./pulse.html" class="">Pulse Survey</a>
-<a href="./skills.html" class="">スキル成長</a>
-<a href="./ai-chat.html" class="">AI相談</a>
-<a href="./referral.html" class="">リファラル</a>
-<a href="./team-overview.html" class="">チーム状況</a>
-<a href="./member-detail.html" class="">メンバー詳細</a>
-<a href="./company-analytics.html" class="">全社分析</a>
-<a href="./employee-management.html" class="active">社員管理</a></nav>
+      <nav class="side-nav"></nav>
     </div>
-    <div class="sidebar-actions">
-      <button class="btn btn-primary btn-block logout-button" type="button">ログアウト</button>
-    </div>
+    <div class="sidebar-actions sidebar-actions-hidden"></div>
   </aside>
+
   <div class="content-shell">
-    <header class="topbar">
-      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
-<a href="./dashboard-manager.html" class="">マネージャー</a>
-<a href="./dashboard-admin.html" class="active">人事・管理者</a></nav>
-      <div class="topbar-right">
-        <div class="role-badge">Admin</div>
-        <div class="user-chip">
-          <div class="avatar">佐</div>
-          <div>
-            <div><strong>佐藤 美咲</strong></div>
-            <div class="card-sub">人事部 / 管理者</div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <header class="topbar"></header>
+
     <main class="main">
-      <section class="page-header">
+      <section class="page-header employee-page-header">
         <div>
           <h2>社員管理</h2>
-          <p>新規登録・削除・権限/所属/マネージャー変更を行う管理パネルです。</p>
+          <p>社員一覧を主軸に、絞り込み・登録・編集・削除をひとつのビューで行えるようにしています。</p>
         </div>
       </section>
-      
-<div class="grid-2">
-  <section class="card">
-    <h3>社員一覧</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>ID</th><th>氏名</th><th>権限</th><th>所属</th><th>マネージャー</th><th>操作</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>山田 健太</td><td>User</td><td>開発1部</td><td>田中 太郎</td><td>編集 / 削除</td></tr>
-          <tr><td>2</td><td>鈴木 花子</td><td>Manager</td><td>開発2部</td><td>-</td><td>編集 / 削除</td></tr>
-          <tr><td>3</td><td>佐藤 美咲</td><td>Admin</td><td>人事部</td><td>-</td><td>編集 / 削除</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-  <section class="card">
-    <h3>編集フォーム</h3>
-    <div class="form-grid">
-      <div><label>氏名</label><input class="input" placeholder="氏名" /></div>
-      <div><label>メールアドレス</label><input class="input" placeholder="mail@example.com" /></div>
-      <div><label>権限</label><select class="select"><option>User</option><option>Manager</option><option>Admin</option></select></div>
-      <div><label>所属</label><input class="input" placeholder="部署名" /></div>
-      <div><label>対象マネージャー</label><input class="input" placeholder="マネージャー名" /></div>
-      <div><label>入社日</label><input class="input" placeholder="2026-04-01" /></div>
-    </div>
-    <div class="btn-row" style="margin-top:18px;"><button class="btn btn-primary" type="button">保存する</button><button class="btn btn-secondary" type="button">新規登録</button></div>
-  </section>
-</div>
 
+      <section class="employee-hero-card">
+        <div>
+          <div class="employee-hero-label">Employee Directory</div>
+          <h3>一覧を主役にした管理ビュー</h3>
+          <p>カード型の社員一覧で状況を把握し、必要なときだけ右側で登録、各カードからモーダルで編集できます。</p>
+        </div>
+        <div class="employee-stats-grid">
+          <div class="stat-card primary">
+            <div class="stat-label">総社員数</div>
+            <div class="stat-value" id="stats-total-users">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">User</div>
+            <div class="stat-value" id="stats-user-role">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Manager</div>
+            <div class="stat-value" id="stats-manager-role">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Admin</div>
+            <div class="stat-value" id="stats-admin-role">0</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="employee-admin-layout employee-admin-layout-wide">
+        <div class="employee-main-column employee-main-column-full">
+          <section class="card employee-list-card employee-list-card-wide">
+            <div class="section-title-row compact employee-list-heading employee-list-heading-spacious">
+              <div>
+                <h3>社員一覧</h3>
+                <div class="card-sub"><span id="user-count">0</span> 件を表示しています。最新Pulseと簡易リスクをカードで確認できます。</div>
+                <div class="card-sub employee-inline-guide">絞り込みは一覧の直下から行えます。編集は各社員カードの「編集」、新規登録は右上の「新規登録」ボタンからモーダルで実行します。部署は Department 一覧APIから取得した名称で表示しています。</div>
+              </div>
+              <div class="btn-row employee-list-actions employee-list-actions-wide">
+                <button id="open-create-modal-button" class="btn btn-primary" type="button">新規登録</button>
+                <button id="filter-reset-button" class="btn btn-secondary" type="button">条件クリア</button>
+                <button id="reload-users-button" class="btn btn-secondary" type="button">再読込</button>
+              </div>
+            </div>
+
+            <div class="employee-filter-inline employee-filter-inline-wide">
+              <div>
+                <label>キーワード</label>
+                <input id="filter-keyword" class="input" placeholder="氏名・メールで検索" />
+              </div>
+              <div>
+                <label>権限</label>
+                <select id="filter-role" class="select">
+                  <option value="">すべて</option>
+                  <option value="user">User</option>
+                  <option value="manager">Manager</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div>
+                <label>所属部署</label>
+                <select id="filter-department-id" class="select">
+                  <option value="">すべて</option>
+                </select>
+              </div>
+              <div>
+                <label>manager_id</label>
+                <input id="filter-manager-id" class="input" inputmode="numeric" placeholder="例: 3" />
+              </div>
+            </div>
+
+            <div class="employee-list-legend">
+              <span class="chip success">離職リスク 低</span>
+              <span class="chip warning">離職リスク 中</span>
+              <span class="chip danger">離職リスク 高</span>
+              <span class="card-sub">最新Pulseのスコアから簡易判定しています。</span>
+            </div>
+
+            <div class="form-message" id="list-message"></div>
+
+            <div id="employee-card-list" class="employee-card-list">
+              <div class="employee-empty-card">読み込み中...</div>
+            </div>
+          </section>
+        </div>
+      </div></div>
     </main>
   </div>
 </div>
-  <script type="module" src="./js/app-shell.js"></script>
+
+
+<div id="employee-create-modal" class="employee-modal" aria-hidden="true">
+  <div class="employee-modal-backdrop" data-close-create-modal="true"></div>
+  <div class="employee-modal-dialog employee-modal-dialog-medium" role="dialog" aria-modal="true" aria-labelledby="create-user-modal-title">
+    <div class="employee-modal-header">
+      <div>
+        <div class="employee-hero-label employee-modal-label">Create Employee</div>
+        <h3 id="create-user-modal-title">新規登録</h3>
+        <div class="card-sub">現在のAPI仕様に合わせて登録します。部署はプルダウン、manager は未設定も可能です。</div>
+      </div>
+      <button id="close-create-modal-button" class="btn btn-secondary" type="button">閉じる</button>
+    </div>
+
+    <div class="employee-modal-body">
+      <form id="create-user-form">
+        <div class="form-grid employee-create-grid-modal">
+          <div>
+            <label>氏名</label>
+            <input name="name" class="input" placeholder="氏名" required />
+          </div>
+          <div>
+            <label>メールアドレス</label>
+            <input name="email" class="input" type="email" placeholder="mail@example.com" required />
+          </div>
+          <div>
+            <label>初期パスワード</label>
+            <input name="password" class="input" type="password" placeholder="初期パスワード" required />
+          </div>
+          <div>
+            <label>権限</label>
+            <select name="role" class="select" required>
+              <option value="user">User</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div>
+            <label>所属部署</label>
+            <select name="department_id" class="select" required>
+              <option value="">選択してください</option>
+            </select>
+          </div>
+          <div>
+            <label>manager_id</label>
+            <select name="manager_id" class="select">
+              <option value="">未設定</option>
+            </select>
+          </div>
+          <div>
+            <label>入社日</label>
+            <input name="joined_at" class="input" type="date" />
+          </div>
+        </div>
+        <div class="btn-row employee-side-actions employee-modal-actions">
+          <button class="btn btn-primary" type="submit">新規登録する</button>
+          <button id="create-reset-button" class="btn btn-secondary" type="button">入力クリア</button>
+        </div>
+        <div class="form-message" id="create-message"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="employee-edit-modal" class="employee-modal" aria-hidden="true">
+  <div class="employee-modal-backdrop" data-close-modal="true"></div>
+  <div class="employee-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-user-name">
+    <div class="employee-modal-header">
+      <div>
+        <div class="employee-hero-label employee-modal-label">Edit Employee</div>
+        <h3 id="edit-user-name">-</h3>
+        <div class="card-sub" id="edit-user-email">-</div>
+      </div>
+      <button id="close-edit-modal-button" class="btn btn-secondary" type="button">閉じる</button>
+    </div>
+
+    <div class="employee-modal-body">
+      <div class="employee-edit-summary">
+        <div class="card employee-mini-card">
+          <h4>基本情報</h4>
+          <div class="footer-note" id="edit-user-base">-</div>
+        </div>
+        <div class="card employee-mini-card">
+          <h4>現在値</h4>
+          <div class="footer-note" id="edit-user-current-values">-</div>
+        </div>
+      </div>
+
+      <div class="employee-edit-forms employee-edit-forms-modal">
+        <form id="edit-role-form" class="card employee-mini-card">
+          <h4>権限更新</h4>
+          <div class="card-sub">`PUT /users/{id}/role` を使用します。</div>
+          <div class="field-group employee-compact-field">
+            <label>role</label>
+            <select name="role" class="select">
+              <option value="user">User</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">権限を保存</button>
+        </form>
+
+        <form id="edit-department-form" class="card employee-mini-card">
+          <h4>所属更新</h4>
+          <div class="card-sub">部署一覧APIから取得したプルダウンで選択します。</div>
+          <div class="field-group employee-compact-field">
+            <label>所属部署</label>
+            <select name="department_id" class="select" required>
+              <option value="">選択してください</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">所属を保存</button>
+        </form>
+
+        <form id="edit-manager-form" class="card employee-mini-card">
+          <h4>マネージャー更新</h4>
+          <div class="card-sub">未設定にもできます。自分自身は選択できません。</div>
+          <div class="field-group employee-compact-field">
+            <label>manager_id</label>
+            <select name="manager_id" class="select">
+              <option value="">未設定</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">マネージャーを保存</button>
+        </form>
+      </div>
+
+      <div class="card employee-danger-card">
+        <h4>削除</h4>
+        <div class="card-sub">確認ダイアログ付きで実行します。削除後は一覧を再取得します。</div>
+        <div class="btn-row employee-side-actions">
+          <button id="delete-user-button" class="btn btn-secondary" type="button">この社員を削除</button>
+        </div>
+      </div>
+
+      <div class="form-message" id="edit-message"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./js/app-shell.js"></script>
+<script type="module" src="./js/employee-management.js"></script>
 </body>
 </html>

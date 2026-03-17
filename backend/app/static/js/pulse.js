@@ -38,9 +38,7 @@ function setMessage(text, type = "") {
   if (!messageEl) return;
   messageEl.textContent = text;
   messageEl.className = "form-message";
-  if (type) {
-    messageEl.classList.add(type);
-  }
+  if (type) messageEl.classList.add(type);
 }
 
 function getTodayKey() {
@@ -61,7 +59,14 @@ function getTodayLabel() {
   }).format(new Date());
 }
 
-function formatDateTime(value) {
+function formatDateLabel(value) {
+  const normalized = normalizeDateString(value);
+  if (!normalized) return "-";
+  const [year, month, day] = normalized.split("-");
+  return `${year}/${month}/${day}`;
+}
+
+function formatDateTimeLabel(value) {
   if (!value) return "-";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
@@ -126,6 +131,10 @@ function getRecordMemo(record) {
   return record?.memo ?? "";
 }
 
+function getRecordCreatedAt(record) {
+  return record?.created_at ?? null;
+}
+
 function updateAnswerStatus(answered) {
   if (!answerStatusBadge) return;
   answerStatusBadge.textContent = answered ? "本日回答済み" : "未回答";
@@ -155,11 +164,13 @@ function renderResult(record, { justSubmitted = false } = {}) {
 
   const score = getRecordScore(record);
   const memo = getRecordMemo(record);
+  const surveyDate = getRecordDate(record);
+  const createdAt = getRecordCreatedAt(record);
 
   resultSubmissionStatus.textContent = justSubmitted ? "登録完了" : "登録済み";
-  resultSurveyDate.textContent = getRecordDate(record) || "-";
+  resultSurveyDate.textContent = formatDateLabel(surveyDate);
   resultScore.textContent = score ?? "-";
-  resultCreatedAt.textContent = formatDateTime(record?.created_at);
+  resultCreatedAt.textContent = formatDateTimeLabel(createdAt);
   resultMemoPreview.textContent = memo ? `メモ: ${memo}` : "メモは未入力です。";
   updateAnswerStatus(true);
 }
@@ -177,9 +188,9 @@ function fillForm(record) {
 
 function sortRecords(records) {
   return [...records].sort((a, b) => {
-    const aDate = new Date(a?.created_at || a?.survey_date || 0).getTime();
-    const bDate = new Date(b?.created_at || b?.survey_date || 0).getTime();
-    return bDate - aDate;
+    const aTime = new Date(a?.created_at || a?.survey_date || 0).getTime();
+    const bTime = new Date(b?.created_at || b?.survey_date || 0).getTime();
+    return bTime - aTime;
   });
 }
 
@@ -191,13 +202,13 @@ function renderHistory(records) {
     return;
   }
 
-  pulseHistory.innerHTML = records
+  pulseHistory.innerHTML = sortRecords(records)
     .slice(0, 5)
     .map((record) => {
-      const date = getRecordDate(record) || "日付不明";
+      const date = formatDateLabel(getRecordDate(record));
       const score = getRecordScore(record);
       const memo = getRecordMemo(record) || "メモなし";
-      const createdAt = formatDateTime(record?.created_at);
+      const createdAt = formatDateTimeLabel(getRecordCreatedAt(record));
 
       return `
         <div class="timeline-item">
@@ -241,26 +252,37 @@ async function fetchMe() {
 }
 
 async function fetchPulseRecords(userId) {
-  try {
-    const data = await fetchJson(`${API_BASE_URL}/pulse/?current_user=${encodeURIComponent(userId)}`, {
-      method: "GET",
-    });
+  const query = new URLSearchParams({ user_id: String(userId) });
+  const data = await fetchJson(`${API_BASE_URL}/pulse/?${query.toString()}`, { method: "GET" });
+  return Array.isArray(data) ? data : [];
+}
 
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.items)) return data.items;
-    if (Array.isArray(data?.data)) return data.data;
-    if (data && typeof data === "object") return [data];
-    return [];
-  } catch (_) {
-    return [];
+async function fetchTodayPulseRecord(userId, surveyDate) {
+  const query = new URLSearchParams({
+    user_id: String(userId),
+    survey_date: surveyDate,
+  });
+
+  try {
+    return await fetchJson(`${API_BASE_URL}/pulse/by-user-date?${query.toString()}`, { method: "GET" });
+  } catch (error) {
+    if (error.status === 404) return null;
+    throw error;
   }
 }
 
-async function submitPulse(userId, payload) {
-  return fetchJson(`${API_BASE_URL}/pulse/?current_user=${encodeURIComponent(userId)}`, {
+async function submitPulse(payload) {
+  return fetchJson(`${API_BASE_URL}/pulse/`, {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+async function loadOwnHistory() {
+  const userId = getUserId(currentUser);
+  const records = await fetchPulseRecords(userId);
+  renderHistory(records);
+  return sortRecords(records);
 }
 
 async function initializePage() {
@@ -273,10 +295,14 @@ async function initializePage() {
   renderLoginInfo(currentUser);
   renderResult(null);
 
-  const records = sortRecords(await fetchPulseRecords(getUserId(currentUser)));
-  renderHistory(records);
+  const userId = getUserId(currentUser);
+  const [today, records] = await Promise.all([
+    fetchTodayPulseRecord(userId, todayKey),
+    fetchPulseRecords(userId),
+  ]);
 
-  todayRecord = records.find((record) => getRecordDate(record) === todayKey) || null;
+  todayRecord = today;
+  renderHistory(records);
 
   if (todayRecord) {
     fillForm(todayRecord);
@@ -310,7 +336,7 @@ form?.addEventListener("submit", async (event) => {
   setMessage("登録中です...");
 
   try {
-    const result = await submitPulse(getUserId(currentUser), {
+    const result = await submitPulse({
       score,
       memo,
       survey_date: todayKey,
@@ -323,15 +349,13 @@ form?.addEventListener("submit", async (event) => {
       survey_date: getRecordDate(result) || todayKey,
     };
 
+    fillForm(todayRecord);
     renderResult(todayRecord, { justSubmitted: true });
     setFormDisabled(true);
     resetButton.disabled = false;
     setMessage("Pulse Survey を登録しました。", "success");
 
-    const records = sortRecords(await fetchPulseRecords(getUserId(currentUser)));
-    if (records.length > 0) {
-      renderHistory(records);
-    }
+    await loadOwnHistory();
   } catch (error) {
     if (error.status === 401) {
       clearToken();
@@ -340,7 +364,15 @@ form?.addEventListener("submit", async (event) => {
     }
 
     if (error.status === 400 || error.status === 409) {
-      setMessage(error.message || "本日の回答はすでに登録済みの可能性があります。", "error");
+      const latestToday = await fetchTodayPulseRecord(getUserId(currentUser), todayKey);
+      if (latestToday) {
+        todayRecord = latestToday;
+        fillForm(todayRecord);
+        renderResult(todayRecord);
+        setFormDisabled(true);
+      }
+      await loadOwnHistory();
+      setMessage(error.message || "本日の回答はすでに登録済みです。", "error");
       return;
     }
 
