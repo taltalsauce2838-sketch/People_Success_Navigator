@@ -5,6 +5,7 @@ from app.models.pulse_survey import PulseSurvey
 from app.models.survey_analysis import SurveyAnalysis
 from app.core.security import hash_password
 from datetime import date, timedelta
+from sqlalchemy.orm import Session
 
 # mapper 登録のために追加
 from app.models.skill import Skill
