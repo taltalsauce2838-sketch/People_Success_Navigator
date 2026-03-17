@@ -6,6 +6,11 @@ const riskDistributionChips = document.getElementById('riskDistributionChips');
 const managerRiskList = document.getElementById('managerRiskList');
 const managerRiskEmpty = document.getElementById('managerRiskEmpty');
 const managerMiniTrendSvg = document.getElementById('managerMiniTrendSvg');
+const managerAlertBadge = document.getElementById('managerAlertBadge');
+const managerAlertSummaryChips = document.getElementById('managerAlertSummaryChips');
+const managerAlertList = document.getElementById('managerAlertList');
+const managerAlertEmpty = document.getElementById('managerAlertEmpty');
+const managerAlertActionStatus = document.getElementById('managerAlertActionStatus');
 const managerMiniTrendStatus = document.getElementById('managerMiniTrendStatus');
 const managerMiniChartLegend = document.getElementById('managerMiniChartLegend');
 const managerTeamTableWrap = document.getElementById('managerTeamTableWrap');
@@ -47,6 +52,34 @@ async function apiFetch(path) {
   return response.json();
 }
 
+
+async function apiPost(path, payload) {
+  const token = getToken();
+  if (!token) throw new Error('アクセストークンがありません。');
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload ?? {}),
+  });
+
+  if (!response.ok) {
+    let message = '更新に失敗しました。';
+    try {
+      const data = await response.json();
+      message = data?.detail || message;
+    } catch (_) {}
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
+  }
+
+  return response.json();
+}
+
 function normalizeRisk(value, score) {
   const raw = String(value || '').toLowerCase();
   if (raw.includes('high') || raw.includes('critical')) return 'high';
@@ -76,6 +109,109 @@ function formatDate(value) {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+function formatConfidence(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return '-';
+  return `${Math.round(numeric * 100)}%`;
+}
+
+function clampText(value, limit = 80) {
+  const text = String(value || '').trim();
+  if (!text) return '理由はまだ登録されていません。';
+  return text.length > limit ? `${text.slice(0, limit)}…` : text;
+}
+
+function setAlertSection(alertPayload) {
+  if (!managerAlertBadge || !managerAlertSummaryChips || !managerAlertList || !managerAlertEmpty) return;
+
+  const members = Array.isArray(alertPayload?.members) ? alertPayload.members : [];
+  const unresolvedCount = Number(alertPayload?.unresolved_count || 0);
+  const highCount = Number(alertPayload?.high_count || 0);
+
+  managerAlertSummaryChips.innerHTML = [
+    { label: `未解消 ${unresolvedCount}件`, className: unresolvedCount > 0 ? 'danger' : 'success' },
+    { label: `高リスク由来 ${highCount}件`, className: highCount > 0 ? 'warning' : '' },
+    { label: `最新アラート ${members.length}件`, className: '' },
+  ].map((item) => `<span class="chip ${item.className}">${escapeHtml(item.label)}</span>`).join('');
+
+  const activeMembers = members
+    .filter((member) => !member.is_resolved)
+    .sort((a, b) => {
+      const weight = { high: 0, medium: 1, low: 2 };
+      const riskA = normalizeRisk(a.risk_level);
+      const riskB = normalizeRisk(b.risk_level);
+      return (weight[riskA] ?? 9) - (weight[riskB] ?? 9);
+    })
+    .slice(0, 5);
+
+  managerAlertBadge.textContent = unresolvedCount > 0 ? `要対応 ${unresolvedCount}件` : 'アラームなし';
+  managerAlertBadge.className = `status-badge ${unresolvedCount > 0 ? 'error' : 'success'}`;
+
+  if (!activeMembers.length) {
+    managerAlertList.innerHTML = '';
+    managerAlertEmpty.classList.remove('hidden');
+    return;
+  }
+
+  managerAlertEmpty.classList.add('hidden');
+  managerAlertList.innerHTML = activeMembers.map((member) => {
+    const risk = riskMeta(member.risk_level);
+    return `
+      <div class="manager-alert-item">
+        <div class="manager-alert-main">
+          <div class="manager-alert-head">
+            <strong>${escapeHtml(member.name)}</strong>
+            <span class="chip ${risk.className}">${escapeHtml(risk.label)}</span>
+            <span class="chip danger">未解消</span>
+          </div>
+          <div class="card-sub">検知日: ${escapeHtml(formatDate(member.last_alert_date))} / 確信度: ${escapeHtml(formatConfidence(member.confidence))}</div>
+          <div class="manager-alert-reason">${escapeHtml(clampText(member.reason))}</div>
+        </div>
+        <div class="manager-alert-actions">
+          <button class="btn btn-primary btn-sm" type="button" data-resolve-alert-id="${escapeHtml(member.alert_id)}" data-member-name="${escapeHtml(member.name)}">対応完了</button>
+          <a class="btn btn-secondary btn-sm" href="${buildDetailHref(member)}">詳細</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+async function refreshAlertSection() {
+  const alertPayload = await apiFetch('/alerts/team-risk?days=14');
+  setAlertSection(alertPayload);
+  return alertPayload;
+}
+
+async function handleResolveAlert(alertId, memberName, button) {
+  if (!alertId) return;
+  if (managerAlertActionStatus) {
+    managerAlertActionStatus.textContent = `${memberName || '対象メンバー'} の対応完了を更新しています…`;
+  }
+  if (button) button.disabled = true;
+
+  try {
+    await apiPost(`/alerts/${encodeURIComponent(alertId)}/resolve`, { is_resolved: true });
+    await refreshAlertSection();
+    if (managerAlertActionStatus) {
+      managerAlertActionStatus.textContent = `${memberName || '対象メンバー'} を対応完了に更新しました。`;
+    }
+  } catch (error) {
+    if (managerAlertActionStatus) {
+      managerAlertActionStatus.textContent = error.message || '対応完了の更新に失敗しました。';
+    }
+    if (button) button.disabled = false;
+  }
+}
+
+if (managerAlertList) {
+  managerAlertList.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-resolve-alert-id]');
+    if (!button) return;
+    handleResolveAlert(button.dataset.resolveAlertId, button.dataset.memberName, button);
+  });
 }
 
 function cleanValues(values) {
@@ -264,6 +400,16 @@ function selectFocusMembers(datasets, membersById) {
 function renderMiniChart(teamHealth, statusMembers) {
   if (!managerMiniTrendSvg || !managerMiniTrendStatus) return;
   if (!teamHealth?.labels?.length || !teamHealth?.datasets?.length) {
+    if (managerAlertBadge) {
+      managerAlertBadge.textContent = '取得失敗';
+      managerAlertBadge.className = 'status-badge error';
+    }
+    if (managerAlertSummaryChips) managerAlertSummaryChips.innerHTML = '';
+    if (managerAlertList) managerAlertList.innerHTML = '';
+    if (managerAlertEmpty) {
+      managerAlertEmpty.classList.remove('hidden');
+      managerAlertEmpty.textContent = error.message || 'アラーム情報を取得できませんでした。';
+    }
     managerMiniTrendSvg.innerHTML = '';
     managerMiniChartLegend.innerHTML = '';
     managerMiniTrendStatus.textContent = 'グラフ対象データがまだありません。';
@@ -410,9 +556,10 @@ async function init() {
   if (!summaryRoot) return;
 
   try {
-    const [teamStatus, teamHealth] = await Promise.all([
+    const [teamStatus, teamHealth, teamAlerts] = await Promise.all([
       apiFetch('/analytics/team-status'),
       apiFetch('/analytics/team-health?days=14'),
+      apiFetch('/alerts/team-risk?days=14'),
     ]);
 
     const statusMembers = Array.isArray(teamStatus?.members) ? teamStatus.members : [];
@@ -431,6 +578,7 @@ async function init() {
     });
 
     setRiskSection(statusMembers, pulseMap);
+    setAlertSection(teamAlerts);
     renderMiniChart(teamHealth, statusMembers);
     renderTeamTable(statusMembers, pulseMap);
     managerTeamTableStatus.textContent = statusMembers.length ? `${statusMembers.length}名の最新状況を表示しています。` : '配下メンバーがまだいません。';
@@ -442,6 +590,16 @@ async function init() {
     managerRiskList.innerHTML = '';
     managerRiskEmpty.classList.remove('hidden');
     managerRiskEmpty.textContent = error.message || 'チーム情報を取得できませんでした。';
+    if (managerAlertBadge) {
+      managerAlertBadge.textContent = '取得失敗';
+      managerAlertBadge.className = 'status-badge error';
+    }
+    if (managerAlertSummaryChips) managerAlertSummaryChips.innerHTML = '';
+    if (managerAlertList) managerAlertList.innerHTML = '';
+    if (managerAlertEmpty) {
+      managerAlertEmpty.classList.remove('hidden');
+      managerAlertEmpty.textContent = error.message || 'アラーム情報を取得できませんでした。';
+    }
     managerMiniTrendSvg.innerHTML = '';
     managerMiniChartLegend.innerHTML = '';
     managerMiniTrendStatus.textContent = error.message || 'グラフ情報を取得できませんでした。';

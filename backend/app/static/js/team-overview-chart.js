@@ -34,6 +34,8 @@
     pulsePending: new Set(),
     filteredMembers: [],
     focusIds: new Set(),
+    alertMap: new Map(),
+    alertSummary: { unresolvedCount: 0, highCount: 0, latestCount: 0 },
   };
 
   const dims = { left: 56, right: 24, top: 24, bottom: 38, width: 980, height: 340 };
@@ -73,6 +75,34 @@
 
     if (!response.ok) {
       let message = 'データ取得に失敗しました。';
+      try {
+        const data = await response.json();
+        message = data?.detail || message;
+      } catch (_) {}
+      const error = new Error(message);
+      error.status = response.status;
+      throw error;
+    }
+
+    return response.json();
+  }
+
+
+  async function apiPost(path, payload) {
+    const token = getToken();
+    if (!token) throw new Error('アクセストークンがありません。');
+
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload ?? {}),
+    });
+
+    if (!response.ok) {
+      let message = '更新に失敗しました。';
       try {
         const data = await response.json();
         message = data?.detail || message;
@@ -255,6 +285,10 @@
     return state.pulseCache.get(String(memberId)) || null;
   }
 
+  function getAlertDetail(memberId) {
+    return state.alertMap.get(String(memberId)) || null;
+  }
+
   async function fetchPulseDetail(memberId) {
     const key = String(memberId);
     if (state.pulseCache.has(key) || state.pulsePending.has(key)) return;
@@ -354,6 +388,7 @@
       ? (withScores.reduce((sum, member) => sum + Number(member.latestSurveyScore), 0) / withScores.length).toFixed(1)
       : '-';
     const missingCountMembers = state.members.filter(member => memberMeta(member).latestMissing >= 2 || memberMeta(member).missing >= 2).length;
+    const unresolvedAlerts = Number(state.alertSummary?.unresolvedCount || 0);
 
     summaryStatsEl.innerHTML = `
       <div class="stat-card solid primary"><div class="stat-label dark">対象メンバー数</div><div class="stat-value dark">${count}</div></div>
@@ -363,8 +398,9 @@
     `;
 
     const managerName = state.currentUser?.name || '担当マネージャー';
-    summaryCaptionEl.textContent = `${managerName} 配下 ${count} 名の最新状態を表示しています。既存の analytics/team-status と analytics/team-health?days=14 を利用しています。`;
-    memberListCaptionEl.textContent = `${count} 件を表示しています。latest_survey_score と risk_level を基準に、詳細な日付・メモは pulse API から補完しています。`;
+    const alertSuffix = unresolvedAlerts > 0 ? ` 未解消アラーム ${unresolvedAlerts} 件を一覧バッジで強調表示しています。` : ' 現在、未解消アラームはありません。';
+    summaryCaptionEl.textContent = `${managerName} 配下 ${count} 名の最新状態を表示しています。既存の analytics/team-status と analytics/team-health?days=14 を利用しています。${alertSuffix}`;
+    memberListCaptionEl.textContent = `${count} 件を表示しています。latest_survey_score と risk_level を基準に、詳細な日付・メモは pulse API から補完し、要対応アラームは alerts/team-risk からバッジ表示しています。`;
   }
 
   function renderPresetButtons() {
@@ -434,14 +470,20 @@
       return;
     }
 
-    listStatusEl.textContent = `${filteredMembers.length} 件を表示中です。最新メモと最終回答日は pulse API から補完しています。`;
+    const unresolvedCount = Number(state.alertSummary?.unresolvedCount || 0);
+    listStatusEl.textContent = `${filteredMembers.length} 件を表示中です。最新メモと最終回答日は pulse API から補完し、未解消アラーム ${unresolvedCount} 件をバッジ表示しています。`;
     listEl.innerHTML = filteredMembers.map(member => {
       const pulseDetail = getPulseDetail(member.id);
+      const alertDetail = getAlertDetail(member.id);
       const risk = riskMeta(member.riskLevel, member.latestSurveyScore);
       const latestDate = pulseDetail?.latestDate ? formatDate(pulseDetail.latestDate) : (state.pulsePending.has(String(member.id)) ? '取得中…' : '-');
       const latestMemo = pulseDetail?.latestMemo ? pulseDetail.latestMemo : (state.pulsePending.has(String(member.id)) ? '取得中…' : 'メモなし');
+      const hasActiveAlert = Boolean(alertDetail && alertDetail.isResolved === false);
+      const alertReason = hasActiveAlert ? String(alertDetail.reason || '').trim() : '';
+      const alertDate = hasActiveAlert ? formatDate(alertDetail.lastAlertDate) : '-';
+      const alertConfidence = hasActiveAlert && Number.isFinite(Number(alertDetail.confidence)) ? `${Math.round(Number(alertDetail.confidence) * 100)}%` : '-';
       return `
-        <article class="employee-row-card team-row-card">
+        <article class="employee-row-card team-row-card${hasActiveAlert ? ' has-team-alert' : ''}">
           <div class="employee-row-top">
             <div>
               <div class="employee-row-title">${escapeHtml(member.name)}</div>
@@ -449,6 +491,7 @@
             </div>
             <div class="employee-row-chip-group">
               <span class="chip ${escapeHtml(risk.className)}">離職リスク ${escapeHtml(risk.label)}</span>
+              ${hasActiveAlert ? '<span class="chip danger">要対応アラーム</span>' : ''}
             </div>
           </div>
           <div class="employee-row-meta-grid team-row-meta-grid">
@@ -456,14 +499,59 @@
             <div><span class="employee-meta-label">最終回答日</span><strong>${escapeHtml(latestDate)}</strong></div>
             <div><span class="employee-meta-label">直属上司</span><strong>${escapeHtml(member.manager || '-')}</strong></div>
             <div class="team-row-note-wrap"><span class="employee-meta-label">最新メモ</span><div class="employee-row-note">${escapeHtml(latestMemo)}</div></div>
+            ${hasActiveAlert ? `<div><span class="employee-meta-label">アラーム検知日</span><strong>${escapeHtml(alertDate)}</strong></div>` : ''}
+            ${hasActiveAlert ? `<div><span class="employee-meta-label">確信度</span><strong>${escapeHtml(alertConfidence)}</strong></div>` : ''}
+            ${hasActiveAlert ? `<div class="team-row-note-wrap team-row-note-wrap-alert"><span class="employee-meta-label">アラーム理由</span><div class="employee-row-note">${escapeHtml(alertReason || '理由はまだ登録されていません。')}</div></div>` : ''}
           </div>
           <div class="employee-row-actions">
+            ${hasActiveAlert ? `<button class="btn btn-primary" type="button" data-resolve-alert-id="${escapeHtml(alertDetail.alertId)}" data-member-name="${escapeHtml(member.name)}">対応完了</button>` : ''}
             <a class="btn btn-secondary" href="${buildDetailHref(member)}">詳細へ</a>
           </div>
         </article>
       `;
     }).join('');
   }
+
+
+  async function refreshAlertData() {
+    const alertPayload = await apiFetch('/alerts/team-risk?days=14');
+    const alertMembers = Array.isArray(alertPayload?.members) ? alertPayload.members : [];
+    state.alertMap = new Map(alertMembers.map((alert) => [String(alert.user_id), {
+      alertId: alert.alert_id,
+      isResolved: Boolean(alert.is_resolved),
+      confidence: alert.confidence,
+      reason: alert.reason || '',
+      riskLevel: alert.risk_level || '',
+      lastAlertDate: alert.last_alert_date || null,
+    }]));
+    state.alertSummary = {
+      unresolvedCount: Number(alertPayload?.unresolved_count || 0),
+      highCount: Number(alertPayload?.high_count || 0),
+      latestCount: alertMembers.length,
+    };
+    renderSummary();
+    renderList();
+  }
+
+  async function handleResolveAlert(alertId, memberName, button) {
+    if (!alertId) return;
+    listStatusEl.textContent = `${memberName || '対象メンバー'} の対応完了を更新しています…`;
+    if (button) button.disabled = true;
+    try {
+      await apiPost(`/alerts/${encodeURIComponent(alertId)}/resolve`, { is_resolved: true });
+      await refreshAlertData();
+      listStatusEl.textContent = `${memberName || '対象メンバー'} を対応完了に更新しました。`;
+    } catch (error) {
+      listStatusEl.textContent = error.message || '対応完了の更新に失敗しました。';
+      if (button) button.disabled = false;
+    }
+  }
+
+  listEl.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-resolve-alert-id]');
+    if (!button) return;
+    handleResolveAlert(button.dataset.resolveAlertId, button.dataset.memberName, button);
+  });
 
   function showTooltip(clientX, clientY, index) {
     const rows = state.members
@@ -554,16 +642,30 @@
     svg.appendChild(hit);
   }
 
-  function applyData(currentUser, teamStatus, teamHealth) {
+  function applyData(currentUser, teamStatus, teamHealth, alertPayload) {
     const labels = Array.isArray(teamHealth?.labels) ? teamHealth.labels : [];
     const statusMembers = Array.isArray(teamStatus?.members) ? teamStatus.members : [];
     const dataSets = Array.isArray(teamHealth?.datasets) ? teamHealth.datasets : [];
+    const alertMembers = Array.isArray(alertPayload?.members) ? alertPayload.members : [];
 
     const managerDepartment = currentUser?.department_id ? `Department ID ${currentUser.department_id}` : '-';
     const managerName = currentUser?.name || '-';
 
     state.currentUser = currentUser;
     state.labels = labels;
+    state.alertMap = new Map(alertMembers.map((alert) => [String(alert.user_id), {
+      alertId: alert.alert_id,
+      isResolved: Boolean(alert.is_resolved),
+      confidence: alert.confidence,
+      reason: alert.reason || '',
+      riskLevel: alert.risk_level || '',
+      lastAlertDate: alert.last_alert_date || null,
+    }]));
+    state.alertSummary = {
+      unresolvedCount: Number(alertPayload?.unresolved_count || 0),
+      highCount: Number(alertPayload?.high_count || 0),
+      latestCount: alertMembers.length,
+    };
     state.members = statusMembers.map((member, index) => {
       const dataset = dataSets.find(item => String(item.user_id) === String(member.user_id)) || dataSets.find(item => item.label === member.name) || {};
       return {
@@ -594,10 +696,11 @@
 
   async function initialize() {
     try {
-      const [currentUser, teamStatus, teamHealth] = await Promise.all([
+      const [currentUser, teamStatus, teamHealth, alertPayload] = await Promise.all([
         apiFetch('/users/me'),
         apiFetch('/analytics/team-status'),
         apiFetch('/analytics/team-health?days=14'),
+        apiFetch('/alerts/team-risk?days=14'),
       ]);
 
       if (!['manager', 'admin'].includes(roleValue(currentUser.role))) {
@@ -607,7 +710,7 @@
         return;
       }
 
-      applyData(currentUser, teamStatus, teamHealth);
+      applyData(currentUser, teamStatus, teamHealth, alertPayload);
       const memberIds = state.members.map(member => member.id);
       preloadPulseDetails(memberIds);
     } catch (error) {

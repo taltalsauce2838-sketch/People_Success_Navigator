@@ -4,7 +4,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from ....db.session import get_db
+from ....db.session import SessionLocal, get_db
 from ....schemas.pulse_survey import (
     PulseSurveyCreate,
     PulseSurveyResponse,
@@ -13,6 +13,7 @@ from ....schemas.pulse_survey import (
 )
 from ....crud import crud_pulse_survey, crud_survey_analysis
 from ....services.dify_client import DifyClient
+from ....services.risk_judge_service import generate_risk_alerts_for_manager
 from ....models.pulse_survey import PulseSurvey
 from ....models.user import User
 from ....core.security import get_admin_user, get_current_user
@@ -23,15 +24,22 @@ dify_client = DifyClient()
 import traceback
 
 
-async def process_dify_analysis(survey_id: int, memo: str, score: int, db: Session):
+async def process_post_survey_tasks(survey_id: int, memo: str, score: int, user_id: int, manager_id: int | None):
+    db = SessionLocal()
     try:
         if memo:
             result = await dify_client.run_analysis(memo, score)
             crud_survey_analysis.update_analysis_result(db, survey_id, result)
+
+        if manager_id:
+            await generate_risk_alerts_for_manager(db, manager_id=manager_id, days=3)
     except Exception as e:
-        print("Dify Analysis Failed")
+        print("Post Survey Background Task Failed")
         print(e)
         traceback.print_exc()
+        db.rollback()
+    finally:
+        db.close()
 
 def get_visible_user_ids_for_manager(db: Session, manager_user_id: int) -> list[int]:
     subordinate_ids = crud_pulse_survey.get_subordinate_user_ids(db, manager_user_id)
@@ -149,11 +157,12 @@ def create_pulse_survey(
     )
 
     background_tasks.add_task(
-        process_dify_analysis,
+        process_post_survey_tasks,
         survey.id,
         survey.memo,
         survey.score,
-        db
+        current_user.id,
+        current_user.manager_id,
     )
 
     return survey

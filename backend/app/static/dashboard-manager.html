@@ -99,15 +99,15 @@
         <article class="card manager-dashboard-card">
           <div class="section-title-row compact">
             <div>
-              <h3>直近の介入メモ</h3>
-              <p class="card-sub">介入メモ機能実装までのプレースホルダーです。</p>
+              <h3>要対応アラーム</h3>
+              <p class="card-sub">離職リスクとは別に、優先して把握したいアラートを表示します。</p>
             </div>
-            <span class="chip warning">TBD</span>
+            <div id="managerAlertBadge" class="status-badge neutral">読込中</div>
           </div>
-          <div class="timeline muted-timeline">
-            <div class="timeline-item"><strong>介入メモ機能は次フェーズで実装予定です</strong><div class="card-sub">ここには最新の面談メモや一次フォロー記録を表示する想定です。</div></div>
-            <div class="timeline-item"><strong>表示予定の情報</strong><div class="card-sub">対象メンバー名 / 記録日時 / メモ冒頭 / 詳細遷移</div></div>
-          </div>
+          <div class="chip-row" id="managerAlertSummaryChips"></div>
+          <div id="managerAlertList" class="manager-alert-list"></div>
+          <div id="managerAlertEmpty" class="empty-state hidden">要対応アラームは現在ありません。</div>
+          <div id="managerAlertActionStatus" class="form-message"></div>
         </article>
 
         <article class="card manager-dashboard-card">

@@ -1244,3 +1244,60 @@ th { color: var(--muted); font-size: 13px; }
 .team-filter-inline{margin-bottom:14px;}
 .team-filter-actions{display:flex;align-items:flex-end;}
 .team-filter-actions .btn{width:100%;}
+
+.manager-alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+.manager-alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid #f0d3d3;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff8f8 0%, #ffffff 100%);
+}
+.manager-alert-main {
+  min-width: 0;
+}
+.manager-alert-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.manager-alert-reason {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+
+.team-row-card.has-team-alert {
+  border-color: rgba(230, 73, 128, 0.28);
+  box-shadow: 0 14px 32px rgba(230, 73, 128, 0.12);
+}
+
+.team-row-note-wrap-alert {
+  grid-column: 1 / -1;
+}
+
+
+.manager-alert-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.manager-alert-actions .btn:disabled,
+.employee-row-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
