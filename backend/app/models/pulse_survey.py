@@ -27,8 +27,5 @@ class PulseSurvey(Base):
     )
 
     user = relationship("User", back_populates="pulse_surveys")
-
-    # ★追加：risk_alertとの関係
-    risk_alerts = relationship("RiskAlert", back_populates="pulse_survey")
     
     analyses = relationship("SurveyAnalysis", back_populates="pulse_survey", cascade="all, delete-orphan")
