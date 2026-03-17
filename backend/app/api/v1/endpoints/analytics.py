@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from collections import defaultdict
 
 from app.db.session import get_db
+from app.core.security import get_current_user
 
 # ===== 既存CRUD（一覧用）=====
 from app.crud.crud_team import get_team_members_with_status
@@ -18,21 +19,13 @@ from app.models.pulse_survey import PulseSurvey
 router = APIRouter()
 
 
-# 仮のログインユーザー
-class CurrentUser:
-    id = 1
-
-
-def get_current_user():
-    return CurrentUser()
-
 # ============================================================
 # ① チーム状況一覧
 # ============================================================
 @router.get("/team-status", response_model=TeamStatusResponse)
 def get_team_status(
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
 
     manager_id = current_user.id
@@ -79,7 +72,7 @@ def get_team_status(
 def get_team_health(
     days: int = Query(30, description="取得日数"),
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """
     チームメンバーのコンディション推移グラフ用データ
