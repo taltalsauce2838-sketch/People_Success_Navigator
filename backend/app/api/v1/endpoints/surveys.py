@@ -54,7 +54,7 @@ def can_view_target_user(db: Session, current_user: User, target_user_id: int) -
     return False
 
 
-@router.get("/", response_model=List[PulseSurveyTrendResponse])
+@router.get("/", response_model=List[PulseSurveyResponse])
 def list_pulse_surveys(
     *,
     db: Session = Depends(get_db),
