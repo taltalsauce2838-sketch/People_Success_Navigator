@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import date, timedelta
 from collections import defaultdict
@@ -15,16 +15,15 @@ from app.schemas.team import TeamStatusResponse, TeamMember, TeamSummary
 from app.models.user import User
 from app.models.pulse_survey import PulseSurvey
 
+# ===== 認証 =====
+from app.core.security import get_current_user
+
 router = APIRouter()
 
 
-# 仮のログインユーザー
-class CurrentUser:
-    id = 1
+def _role_value(user: User) -> str:
+    return user.role.value if hasattr(user.role, "value") else str(user.role)
 
-
-def get_current_user():
-    return CurrentUser()
 
 # ============================================================
 # ① チーム状況一覧
@@ -32,8 +31,15 @@ def get_current_user():
 @router.get("/team-status", response_model=TeamStatusResponse)
 def get_team_status(
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
+    role_value = _role_value(current_user)
+
+    if role_value not in ["manager", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="team-status は manager / admin のみ利用できます"
+        )
 
     manager_id = current_user.id
 
@@ -43,7 +49,6 @@ def get_team_status(
     scores = []
 
     for row in rows:
-
         member = TeamMember(
             user_id=row.id,
             name=row.name,
@@ -57,10 +62,7 @@ def get_team_status(
         members.append(member)
 
     member_count = len(members)
-
-    avg_score = None
-    if len(scores) > 0:
-        avg_score = sum(scores) / len(scores)
+    avg_score = sum(scores) / len(scores) if scores else None
 
     summary = TeamSummary(
         member_count=member_count,
@@ -72,19 +74,28 @@ def get_team_status(
         members=members
     )
 
+
 # ============================================================
-# ② チーム健康状態グラフ（新規）
+# ② チーム健康状態グラフ
 # ============================================================
 @router.get("/team-health")
 def get_team_health(
-    days: int = Query(30, description="取得日数"),
+    days: int = Query(30, ge=1, le=90, description="取得日数"),
     db: Session = Depends(get_db),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """
     チームメンバーのコンディション推移グラフ用データ
     （全メンバーを1つのグラフに重ねる）
     """
+
+    role_value = _role_value(current_user)
+
+    if role_value not in ["manager", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="team-health は manager / admin のみ利用できます"
+        )
 
     manager_id = current_user.id
 
@@ -94,6 +105,7 @@ def get_team_health(
     team_members = (
         db.query(User)
         .filter(User.manager_id == manager_id)
+        .order_by(User.id.asc())
         .all()
     )
 
@@ -118,6 +130,7 @@ def get_team_health(
             PulseSurvey.survey_date >= start_date,
             PulseSurvey.survey_date <= end_date,
         )
+        .order_by(PulseSurvey.user_id.asc(), PulseSurvey.survey_date.asc())
         .all()
     )
 
@@ -149,14 +162,12 @@ def get_team_health(
 
         current = start_date
         while current <= end_date:
-
             score = survey_map[member.id].get(current)
-
             data.append(score if score is not None else None)
-
             current += timedelta(days=1)
 
         datasets.append({
+            "user_id": member.id,
             "label": member.name,
             "data": data
         })
