@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Pulse Survey App"
     DATABASE_URL: str
     DIFY_API_KEY: Optional[str] = None
+    DIFY_API_KEY2: Optional[str] = None
 
     # .env ファイルの読み込み設定
     model_config = SettingsConfigDict(
