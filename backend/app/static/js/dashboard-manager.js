@@ -11,6 +11,10 @@ const managerAlertSummaryChips = document.getElementById('managerAlertSummaryChi
 const managerAlertList = document.getElementById('managerAlertList');
 const managerAlertEmpty = document.getElementById('managerAlertEmpty');
 const managerAlertActionStatus = document.getElementById('managerAlertActionStatus');
+
+const managerJudgeDaysSelect = document.getElementById('managerJudgeDaysSelect');
+const managerJudgeRunButton = document.getElementById('managerJudgeRunButton');
+const managerJudgeActionStatus = document.getElementById('managerJudgeActionStatus');
 const managerMiniTrendStatus = document.getElementById('managerMiniTrendStatus');
 const managerMiniChartLegend = document.getElementById('managerMiniChartLegend');
 const managerTeamTableWrap = document.getElementById('managerTeamTableWrap');
@@ -183,6 +187,28 @@ async function refreshAlertSection() {
   const alertPayload = await apiFetch('/alerts/team-risk?days=14');
   setAlertSection(alertPayload);
   return alertPayload;
+}
+
+async function runManualJudge(days) {
+  const normalizedDays = Number(days || 7);
+  if (managerJudgeActionStatus) {
+    managerJudgeActionStatus.textContent = `直近${normalizedDays}日で再判定を実行しています…`;
+  }
+  if (managerJudgeRunButton) managerJudgeRunButton.disabled = true;
+
+  try {
+    const result = await apiPost(`/judge/generate?days=${encodeURIComponent(normalizedDays)}`);
+    await refreshAlertSection();
+    if (managerJudgeActionStatus) {
+      managerJudgeActionStatus.textContent = `再判定を実行しました。生成件数: ${Number(result?.generated_count || 0)}件`;
+    }
+  } catch (error) {
+    if (managerJudgeActionStatus) {
+      managerJudgeActionStatus.textContent = error.message || '再判定の実行に失敗しました。';
+    }
+  } finally {
+    if (managerJudgeRunButton) managerJudgeRunButton.disabled = false;
+  }
 }
 
 async function handleResolveAlert(alertId, memberName, button) {
@@ -610,3 +636,9 @@ async function init() {
 }
 
 init();
+
+if (managerJudgeRunButton) {
+  managerJudgeRunButton.addEventListener('click', () => {
+    runManualJudge(managerJudgeDaysSelect?.value || 7);
+  });
+}

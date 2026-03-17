@@ -1301,3 +1301,17 @@ th { color: var(--muted); font-size: 13px; }
   opacity: 0.6;
   cursor: wait;
 }
+
+
+.manager-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.compact-select {
+  min-width: 110px;
+  height: 36px;
+  padding: 6px 10px;
+}

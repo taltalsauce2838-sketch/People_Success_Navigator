@@ -102,11 +102,20 @@
               <h3>要対応アラーム</h3>
               <p class="card-sub">離職リスクとは別に、優先して把握したいアラートを表示します。</p>
             </div>
-            <div id="managerAlertBadge" class="status-badge neutral">読込中</div>
+            <div class="manager-inline-actions">
+              <select id="managerJudgeDaysSelect" class="input compact-select" aria-label="再判定期間">
+                <option value="3">直近3日</option>
+                <option value="7" selected>直近7日</option>
+                <option value="14">直近14日</option>
+              </select>
+              <button id="managerJudgeRunButton" class="btn btn-secondary btn-sm" type="button">手動再判定</button>
+              <div id="managerAlertBadge" class="status-badge neutral">読込中</div>
+            </div>
           </div>
           <div class="chip-row" id="managerAlertSummaryChips"></div>
           <div id="managerAlertList" class="manager-alert-list"></div>
           <div id="managerAlertEmpty" class="empty-state hidden">要対応アラームは現在ありません。</div>
+          <div id="managerJudgeActionStatus" class="form-message"></div>
           <div id="managerAlertActionStatus" class="form-message"></div>
         </article>
 

@@ -13,7 +13,6 @@ from ....schemas.pulse_survey import (
 )
 from ....crud import crud_pulse_survey, crud_survey_analysis
 from ....services.dify_client import DifyClient
-from ....services.risk_judge_service import generate_risk_alerts_for_manager
 from ....models.pulse_survey import PulseSurvey
 from ....models.user import User
 from ....core.security import get_admin_user, get_current_user
@@ -24,15 +23,12 @@ dify_client = DifyClient()
 import traceback
 
 
-async def process_post_survey_tasks(survey_id: int, memo: str, score: int, user_id: int, manager_id: int | None):
+async def process_post_survey_tasks(survey_id: int, memo: str, score: int, user_id: int):
     db = SessionLocal()
     try:
         if memo:
             result = await dify_client.run_analysis(memo, score)
             crud_survey_analysis.update_analysis_result(db, survey_id, result)
-
-        if manager_id:
-            await generate_risk_alerts_for_manager(db, manager_id=manager_id, days=3)
     except Exception as e:
         print("Post Survey Background Task Failed")
         print(e)
@@ -162,7 +158,6 @@ def create_pulse_survey(
         survey.memo,
         survey.score,
         current_user.id,
-        current_user.manager_id,
     )
 
     return survey
