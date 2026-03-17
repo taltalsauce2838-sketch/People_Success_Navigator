@@ -7,7 +7,6 @@ from app.db.session import get_db
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.pulse_survey import PulseSurvey
-from app.models.survey_analysis import SurveyAnalysis
 from app.models.risk_alert import RiskAlert
 from app.services.dify_client import DifyClient2
 
@@ -53,15 +52,6 @@ async def generate_risk_alerts(
         if not surveys:
             continue
 
-        survey_ids = [s.id for s in surveys]
-
-        # ---- AI分析結果取得 ----
-        analyses = (
-            db.query(SurveyAnalysis)
-            .filter(SurveyAnalysis.pulse_survey_id.in_(survey_ids))
-            .all()
-        )
-
         # ---- AIに渡すデータ作成 ----
         ai_input = {
             "scores": [s.score for s in surveys],
@@ -76,13 +66,15 @@ async def generate_risk_alerts(
         confidence = ai_result.get("confidence", 0.5)
         reason = ai_result.get("reason", "")
 
+        is_resolved = False if status == "high" else True
+
         # ---- アラート保存 ----
         alert = RiskAlert(
             user_id=member.id,
             status=status,
             confidence=confidence,
             reason=reason,
-            is_resolved=False,
+            is_resolved=is_resolved,
             created_at=datetime.utcnow()
         )
 
