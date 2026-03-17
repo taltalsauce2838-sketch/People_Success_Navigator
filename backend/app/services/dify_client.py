@@ -54,7 +54,6 @@ class DifyClient2:
         "inputs": {
             "scores": json.dumps(ai_input["scores"]),
             "memos": json.dumps(ai_input["memos"], ensure_ascii=False),
-            "sentiments": json.dumps(ai_input["sentiments"]),
         },
             "response_mode": "blocking",
             "user": "pulse-survey-system"

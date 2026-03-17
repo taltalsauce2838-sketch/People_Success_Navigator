@@ -25,21 +25,10 @@ class RiskAlert(Base):
 
     reason = Column(Text)
 
-    ai_model = Column(String)
-
     confidence = Column(Float)
 
     is_resolved = Column(Boolean, default=False)
 
-    # ★追加：どのサーベイから生成されたか
-    pulse_survey_id = Column(
-        Integer,
-        ForeignKey("pulse_surveys.id")
-    )
-
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="risk_alerts")
-
-    # ★追加：surveyとの関係
-    pulse_survey = relationship("PulseSurvey", back_populates="risk_alerts")

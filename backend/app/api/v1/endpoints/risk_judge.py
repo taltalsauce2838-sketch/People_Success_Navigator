@@ -19,7 +19,12 @@ dify_client = DifyClient2()
 async def generate_risk_alerts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    days: int = Query(7, description="分析対象日数")
+    days: int = Query(
+        3,
+        ge=1,
+        le=15,
+        description="分析対象日数（デフォルト3日）"
+    )
 ):
     """
     直近N日分のサーベイから離職リスクを生成
@@ -61,11 +66,9 @@ async def generate_risk_alerts(
         ai_input = {
             "scores": [s.score for s in surveys],
             "memos": [s.memo for s in surveys if s.memo],
-            "sentiments": [a.sentiment_score for a in analyses],
         }
 
         # ---- Difyで離職判定 ----
-        print("ai_input:", ai_input)
         ai_result = await dify_client.run_risk_assessment(ai_input)
 
         # 想定レスポンス
@@ -79,7 +82,6 @@ async def generate_risk_alerts(
             status=status,
             confidence=confidence,
             reason=reason,
-            ai_model="dify",
             is_resolved=False,
             created_at=datetime.utcnow()
         )
