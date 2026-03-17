@@ -794,3 +794,17 @@ th { color: var(--muted); font-size: 13px; }
     gap: 10px;
   }
 }
+
+
+.team-chart-status,
+.team-list-status {
+  margin: 6px 0 12px;
+}
+
+.empty-state {
+  padding: 24px;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  background: #fafcff;
+  color: var(--muted);
+}

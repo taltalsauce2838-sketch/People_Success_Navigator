@@ -20,42 +20,23 @@
       <div class="avatar">田</div>
       <h3>田中 太郎</h3>
       <div class="role-badge">Manager</div>
-      <div class="footer-note">開発1部 マネージャー</div>
+      <div class="footer-note">担当チーム</div>
     </section>
     <div>
       <div class="nav-label">Sidebar</div>
-      <nav class="side-nav"><a href="./dashboard-manager.html" class="">ダッシュボード</a>
-<a href="./pulse.html" class="">Pulse Survey</a>
-<a href="./skills.html" class="">スキル成長</a>
-<a href="./ai-chat.html" class="">AI相談</a>
-<a href="./referral.html" class="">リファラル</a>
-<a href="./team-overview.html" class="active">チーム状況</a>
-<a href="./member-detail.html" class="">メンバー詳細</a></nav>
+      <nav class="side-nav"></nav>
     </div>
     <div class="sidebar-actions sidebar-actions-hidden"></div>
   </aside>
+
   <div class="content-shell">
-    <header class="topbar">
-      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
-<a href="./dashboard-manager.html" class="active">マネージャー</a>
-<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
-      <div class="topbar-right">
-        <div class="role-badge">Manager</div>
-        <div class="user-chip">
-          <div class="avatar">田</div>
-          <div>
-            <div><strong>田中 太郎</strong></div>
-            <div class="card-sub">開発1部 マネージャー</div>
-          </div>
-        </div>
-        
-      </div>
-    </header>
+    <header class="topbar"></header>
+
     <main class="main">
       <section class="page-header employee-page-header">
         <div>
           <h2>チーム状況一覧</h2>
-          <p>配下メンバーの状態確認を一覧中心で行い、必要に応じて個人詳細へドリルダウンできるビューです。</p>
+          <p>配下メンバーの状態を一覧中心で把握し、必要に応じて個人詳細へドリルダウンするビューです。</p>
         </div>
       </section>
 
@@ -65,28 +46,22 @@
             <div>
               <div class="employee-hero-label team-header-label">Team Overview</div>
               <h3>チーム全体サマリー</h3>
-              <div class="card-sub">配下メンバーの最新状態を俯瞰しつつ、詳細確認が必要なメンバーを一覧から見つけられる構成です。</div>
+              <div class="card-sub" id="team-summary-caption">既存の analytics / pulse API を組み合わせて、配下メンバーの最新状態と直近2週間の推移を表示します。</div>
             </div>
           </div>
-          <div class="team-summary-stats">
-            <div class="stat-card solid primary">
-              <div class="stat-label dark">対象メンバー数</div>
-              <div class="stat-value dark">3</div>
-            </div>
-            <div class="stat-card solid">
-              <div class="stat-label dark">高リスク</div>
-              <div class="stat-value dark">1</div>
-            </div>
-            <div class="stat-card solid">
-              <div class="stat-label dark">平均スコア</div>
-              <div class="stat-value dark">3.0</div>
-            </div>
+
+          <div class="team-summary-stats" id="team-summary-stats">
+            <div class="stat-card solid primary"><div class="stat-label dark">対象メンバー数</div><div class="stat-value dark">-</div></div>
+            <div class="stat-card solid"><div class="stat-label dark">高リスク</div><div class="stat-value dark">-</div></div>
+            <div class="stat-card solid"><div class="stat-label dark">平均スコア</div><div class="stat-value dark">-</div></div>
+            <div class="stat-card solid"><div class="stat-label dark">未回答あり</div><div class="stat-value dark">-</div></div>
           </div>
+
           <div class="team-chart-card team-chart-card-focused">
             <div class="team-chart-head team-chart-head-stack">
               <div>
                 <div class="chart-title">注目メンバーの Pulse 推移（直近2週間）</div>
-                <div class="card-sub">初期表示では「高リスク・変動大・未回答・安定比較」から注目メンバーを自動選定します。検索付きドロップダウンから任意のメンバーを追加し、表示対象を5〜6名程度に保ったまま確認できます。</div>
+                <div class="card-sub" id="team-chart-description">初期表示では「高リスク・変動大・未回答・安定比較」を優先して 5〜6 名を自動選定します。</div>
               </div>
               <div class="team-chart-presets" id="teamChartPresets" aria-label="表示プリセット"></div>
             </div>
@@ -105,11 +80,11 @@
                 </label>
                 <button class="btn btn-secondary btn-compact" type="button" id="addMemberButton">追加</button>
               </div>
-              <div class="card-sub team-chart-toolbar-note">表示中のメンバーは下のチップから個別に外せます。最低1名は表示したままになります。</div>
+              <div class="card-sub team-chart-toolbar-note">表示中メンバーは下のチップから個別に外せます。最低1名は表示したままになります。</div>
             </div>
 
             <div class="selected-member-chips" id="selectedMemberChips" aria-label="表示中メンバー"></div>
-
+            <div class="team-chart-status card-sub" id="teamChartStatus">読み込み中です…</div>
             <div class="team-chart-tooltip" id="teamChartTooltip" hidden></div>
             <div class="team-line-chart member-trend-chart interactive-member-chart" aria-label="メンバー別Pulse推移チャート">
               <svg id="teamMemberTrendSvg" viewBox="0 0 980 340" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="teamTrendChartTitle teamTrendChartDesc">
@@ -127,8 +102,8 @@
             <div class="section-title-row compact employee-list-heading employee-list-heading-spacious">
               <div>
                 <h3>メンバー一覧</h3>
-                <div class="card-sub">3 件を表示しています。最新スコアと簡易離職リスクを一覧で確認できます。</div>
-                <div class="card-sub employee-inline-guide">各行の「詳細へ」から member-detail に遷移します。チーム一覧を主役にしつつ、必要な時だけ個人詳細へドリルダウンする設計です。</div>
+                <div class="card-sub" id="member-list-caption">読み込み中です…</div>
+                <div class="card-sub employee-inline-guide">各行の「詳細へ」から member-detail に遷移します。注目対象の確認と個別深掘りを往復しやすい構成です。</div>
               </div>
             </div>
 
@@ -136,81 +111,19 @@
               <span class="chip success">離職リスク 低</span>
               <span class="chip warning">離職リスク 中</span>
               <span class="chip danger">離職リスク 高</span>
-              <span class="card-sub">最新Pulseのスコアから簡易判定しています。</span>
+              <span class="card-sub">latest_survey_score と risk_level をもとに表示しています。</span>
             </div>
 
-            <div class="employee-card-list team-row-list">
-              <article class="employee-row-card team-row-card">
-                <div class="employee-row-top">
-                  <div>
-                    <div class="employee-row-title">山田 健太</div>
-                    <div class="employee-row-sub">User ・ 開発1部</div>
-                  </div>
-                  <div class="employee-row-chip-group">
-                    <span class="chip success">離職リスク 低</span>
-                  </div>
-                </div>
-                <div class="employee-row-meta-grid team-row-meta-grid">
-                  <div><span class="employee-meta-label">最新スコア</span><strong>4</strong></div>
-                  <div><span class="employee-meta-label">最終回答日</span><strong>2026-03-15</strong></div>
-                  <div><span class="employee-meta-label">直属上司</span><strong>田中 太郎</strong></div>
-                  <div class="team-row-note-wrap"><span class="employee-meta-label">最新メモ</span><div class="employee-row-note">開発は順調。学習面も安定。</div></div>
-                </div>
-                <div class="employee-row-actions">
-                  <a class="btn btn-secondary" href="./member-detail.html?user_id=1&from=team-overview&name=%E5%B1%B1%E7%94%B0%20%E5%81%A5%E5%A4%AA&role=User&department=%E9%96%8B%E7%99%BA1%E9%83%A8&manager=%E7%94%B0%E4%B8%AD%20%E5%A4%AA%E9%83%8E">詳細へ</a>
-                </div>
-              </article>
-
-              <article class="employee-row-card team-row-card">
-                <div class="employee-row-top">
-                  <div>
-                    <div class="employee-row-title">鈴木 花子</div>
-                    <div class="employee-row-sub">User ・ 開発1部</div>
-                  </div>
-                  <div class="employee-row-chip-group">
-                    <span class="chip warning">離職リスク 中</span>
-                  </div>
-                </div>
-                <div class="employee-row-meta-grid team-row-meta-grid">
-                  <div><span class="employee-meta-label">最新スコア</span><strong>3</strong></div>
-                  <div><span class="employee-meta-label">最終回答日</span><strong>2026-03-15</strong></div>
-                  <div><span class="employee-meta-label">直属上司</span><strong>田中 太郎</strong></div>
-                  <div class="team-row-note-wrap"><span class="employee-meta-label">最新メモ</span><div class="employee-row-note">やや疲労感あり。相談は可能。</div></div>
-                </div>
-                <div class="employee-row-actions">
-                  <a class="btn btn-secondary" href="./member-detail.html?user_id=2&from=team-overview&name=%E9%88%B4%E6%9C%A8%20%E8%8A%B1%E5%AD%90&role=User&department=%E9%96%8B%E7%99%BA1%E9%83%A8&manager=%E7%94%B0%E4%B8%AD%20%E5%A4%AA%E9%83%8E">詳細へ</a>
-                </div>
-              </article>
-
-              <article class="employee-row-card team-row-card">
-                <div class="employee-row-top">
-                  <div>
-                    <div class="employee-row-title">田辺 一郎</div>
-                    <div class="employee-row-sub">User ・ 開発1部</div>
-                  </div>
-                  <div class="employee-row-chip-group">
-                    <span class="chip danger">離職リスク 高</span>
-                  </div>
-                </div>
-                <div class="employee-row-meta-grid team-row-meta-grid">
-                  <div><span class="employee-meta-label">最新スコア</span><strong>2</strong></div>
-                  <div><span class="employee-meta-label">最終回答日</span><strong>2026-03-15</strong></div>
-                  <div><span class="employee-meta-label">直属上司</span><strong>田中 太郎</strong></div>
-                  <div class="team-row-note-wrap"><span class="employee-meta-label">最新メモ</span><div class="employee-row-note">不安感あり。面談設定を推奨。</div></div>
-                </div>
-                <div class="employee-row-actions">
-                  <a class="btn btn-secondary" href="./member-detail.html?user_id=3&from=team-overview&name=%E7%94%B0%E8%BE%BA%20%E4%B8%80%E9%83%8E&role=User&department=%E9%96%8B%E7%99%BA1%E9%83%A8&manager=%E7%94%B0%E4%B8%AD%20%E5%A4%AA%E9%83%8E">詳細へ</a>
-                </div>
-              </article>
-            </div>
+            <div class="team-list-status card-sub" id="teamListStatus">読み込み中です…</div>
+            <div class="employee-card-list team-row-list" id="teamMemberList"></div>
           </section>
         </div>
       </div>
+    </main>
 
-        </main>
     <script src="./js/team-overview-chart.js"></script>
   </div>
 </div>
-  <script type="module" src="./js/app-shell.js"></script>
+<script type="module" src="./js/app-shell.js"></script>
 </body>
 </html>
