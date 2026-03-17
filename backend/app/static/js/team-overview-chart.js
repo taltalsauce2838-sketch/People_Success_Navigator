@@ -14,6 +14,12 @@
   const summaryStatsEl = document.getElementById('team-summary-stats');
   const summaryCaptionEl = document.getElementById('team-summary-caption');
   const memberListCaptionEl = document.getElementById('member-list-caption');
+  const teamFilterKeyword = document.getElementById('team-filter-keyword');
+  const teamFilterRisk = document.getElementById('team-filter-risk');
+  const teamFilterResponse = document.getElementById('team-filter-response');
+  const teamFilterFocus = document.getElementById('team-filter-focus');
+  const teamSort = document.getElementById('team-sort');
+  const teamFilterReset = document.getElementById('team-filter-reset');
   if (!svg || !presetsEl || !tooltip || !searchInput || !memberSelect || !addMemberButton || !selectedMemberChips || !listEl) return;
 
   const state = {
@@ -26,6 +32,8 @@
     members: [],
     pulseCache: new Map(),
     pulsePending: new Set(),
+    filteredMembers: [],
+    focusIds: new Set(),
   };
 
   const dims = { left: 56, right: 24, top: 24, bottom: 38, width: 980, height: 340 };
@@ -282,6 +290,62 @@
     await Promise.all(Array.from({ length: Math.min(concurrency, ids.length) }, worker));
   }
 
+  function getFilteredMembers() {
+    const keyword = (teamFilterKeyword?.value || '').trim().toLowerCase();
+    const risk = (teamFilterRisk?.value || '').trim().toLowerCase();
+    const response = (teamFilterResponse?.value || '').trim().toLowerCase();
+    const focusOnly = (teamFilterFocus?.value || '').trim().toLowerCase() === 'focus';
+    const sortBy = (teamSort?.value || 'risk_desc').trim();
+
+    const filtered = state.members.filter(member => {
+      const meta = memberMeta(member);
+      const memberRisk = normalizeStatusRisk(member.riskLevel, member.latestSurveyScore);
+      const matchesKeyword = !keyword || String(member.name || '').toLowerCase().includes(keyword);
+      const matchesRisk = !risk || memberRisk === risk;
+      const hasMissing = meta.latestMissing >= 2 || meta.missing >= 2;
+      const matchesResponse = !response || (response === 'missing' ? hasMissing : !hasMissing);
+      const matchesFocus = !focusOnly || state.focusIds.has(member.id);
+      return matchesKeyword && matchesRisk && matchesResponse && matchesFocus;
+    });
+
+    const riskOrder = (value) => value === 'high' ? 0 : value === 'medium' ? 1 : value === 'low' ? 2 : 3;
+    const compareNullable = (a, b, direction = 'asc') => {
+      if (a == null && b == null) return 0;
+      if (a == null) return 1;
+      if (b == null) return -1;
+      if (a < b) return direction === 'asc' ? -1 : 1;
+      if (a > b) return direction === 'asc' ? 1 : -1;
+      return 0;
+    };
+
+    filtered.sort((a, b) => {
+      const riskA = normalizeStatusRisk(a.riskLevel, a.latestSurveyScore);
+      const riskB = normalizeStatusRisk(b.riskLevel, b.latestSurveyScore);
+      const detailA = getPulseDetail(a.id);
+      const detailB = getPulseDetail(b.id);
+      const scoreA = Number.isFinite(Number(a.latestSurveyScore)) ? Number(a.latestSurveyScore) : null;
+      const scoreB = Number.isFinite(Number(b.latestSurveyScore)) ? Number(b.latestSurveyScore) : null;
+      switch (sortBy) {
+        case 'name_asc':
+          return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
+        case 'latest_date_desc':
+          return compareNullable(detailA?.latestDate || null, detailB?.latestDate || null, 'desc') || riskOrder(riskA) - riskOrder(riskB);
+        case 'latest_date_asc':
+          return compareNullable(detailA?.latestDate || null, detailB?.latestDate || null, 'asc') || riskOrder(riskA) - riskOrder(riskB);
+        case 'score_asc':
+          return compareNullable(scoreA, scoreB, 'asc') || riskOrder(riskA) - riskOrder(riskB);
+        case 'score_desc':
+          return compareNullable(scoreA, scoreB, 'desc') || riskOrder(riskA) - riskOrder(riskB);
+        case 'risk_desc':
+        default:
+          return riskOrder(riskA) - riskOrder(riskB) || compareNullable(scoreA, scoreB, 'asc') || String(a.name || '').localeCompare(String(b.name || ''), 'ja');
+      }
+    });
+
+    state.filteredMembers = filtered;
+    return filtered;
+  }
+
   function renderSummary() {
     const count = state.members.length;
     const highRiskCount = state.members.filter(member => normalizeStatusRisk(member.riskLevel, member.latestSurveyScore) === 'high').length;
@@ -358,14 +422,20 @@
   }
 
   function renderList() {
+    const filteredMembers = getFilteredMembers();
     if (!state.members.length) {
       listStatusEl.textContent = '表示できる配下メンバーがありません。';
       listEl.innerHTML = '<div class="empty-state">配下メンバーが存在しません。</div>';
       return;
     }
+    if (!filteredMembers.length) {
+      listStatusEl.textContent = '条件に一致するメンバーがいません。';
+      listEl.innerHTML = '<div class="employee-empty-card">条件に一致するメンバーがいません。</div>';
+      return;
+    }
 
-    listStatusEl.textContent = '一覧を表示中です。最新メモと最終回答日は pulse API から補完しています。';
-    listEl.innerHTML = state.members.map(member => {
+    listStatusEl.textContent = `${filteredMembers.length} 件を表示中です。最新メモと最終回答日は pulse API から補完しています。`;
+    listEl.innerHTML = filteredMembers.map(member => {
       const pulseDetail = getPulseDetail(member.id);
       const risk = riskMeta(member.riskLevel, member.latestSurveyScore);
       const latestDate = pulseDetail?.latestDate ? formatDate(pulseDetail.latestDate) : (state.pulsePending.has(String(member.id)) ? '取得中…' : '-');
@@ -510,7 +580,9 @@
     });
 
     state.activePreset = 'focus';
-    state.visible = new Set(getFocusIds());
+    const focusIds = getFocusIds();
+    state.focusIds = new Set(focusIds);
+    state.visible = new Set(focusIds);
 
     renderSummary();
     syncPicker();
@@ -546,6 +618,26 @@
       summaryCaptionEl.textContent = message;
     }
   }
+
+
+
+  function rerenderListControls() {
+    renderList();
+  }
+
+  teamFilterKeyword?.addEventListener('input', rerenderListControls);
+  teamFilterRisk?.addEventListener('change', rerenderListControls);
+  teamFilterResponse?.addEventListener('change', rerenderListControls);
+  teamFilterFocus?.addEventListener('change', rerenderListControls);
+  teamSort?.addEventListener('change', rerenderListControls);
+  teamFilterReset?.addEventListener('click', () => {
+    if (teamFilterKeyword) teamFilterKeyword.value = '';
+    if (teamFilterRisk) teamFilterRisk.value = '';
+    if (teamFilterResponse) teamFilterResponse.value = '';
+    if (teamFilterFocus) teamFilterFocus.value = '';
+    if (teamSort) teamSort.value = 'risk_desc';
+    renderList();
+  });
 
   searchInput.addEventListener('input', () => {
     state.searchTerm = searchInput.value;

@@ -82,7 +82,7 @@
               </div>
             </div>
 
-            <div class="employee-filter-inline employee-filter-inline-wide">
+            <div class="employee-filter-inline employee-filter-inline-wide employee-filter-inline-extended">
               <div>
                 <label>キーワード</label>
                 <input id="filter-keyword" class="input" placeholder="氏名・メールで検索" />
@@ -105,6 +105,27 @@
               <div>
                 <label>manager_id</label>
                 <input id="filter-manager-id" class="input" inputmode="numeric" placeholder="例: 3" />
+              </div>
+              <div>
+                <label>離職リスク</label>
+                <select id="filter-risk" class="select">
+                  <option value="">すべて</option>
+                  <option value="high">高</option>
+                  <option value="medium">中</option>
+                  <option value="low">低</option>
+                  <option value="unknown">未判定</option>
+                </select>
+              </div>
+              <div>
+                <label>並び替え</label>
+                <select id="sort-users" class="select">
+                  <option value="risk_desc">離職リスク順</option>
+                  <option value="pulse_asc">最新スコアが低い順</option>
+                  <option value="pulse_desc">最新スコアが高い順</option>
+                  <option value="joined_desc">入社日が新しい順</option>
+                  <option value="joined_asc">入社日が古い順</option>
+                  <option value="name_asc">氏名順</option>
+                </select>
               </div>
             </div>
 

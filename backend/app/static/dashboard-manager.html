@@ -36,9 +36,10 @@
   </aside>
   <div class="content-shell">
     <header class="topbar">
-      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
-<a href="./dashboard-manager.html" class="active">マネージャー</a>
-<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
+      <div class="topbar-left">
+        <div class="topbar-title">ダッシュボード</div>
+        <div class="card-sub">マネージャー向け画面</div>
+      </div>
       <div class="topbar-right">
         <div class="role-badge">Manager</div>
         <div class="user-chip">
@@ -51,26 +52,80 @@
       </div>
     </header>
     <main class="main">
-      <section class="page-header">
+      <section class="page-header dashboard-manager-header">
         <div>
-          <h2>マイダッシュボード</h2>
-          <p>マネージャー向け。チーム状況の把握とメンバー詳細導線を追加しています。</p>
+          <h2>マネージャーダッシュボード</h2>
+          <p>チーム状況の変化とフォロー対象をすぐに把握できるよう、チーム状況の要点を集約しています。</p>
         </div>
+        <a class="btn btn-primary" href="./team-overview.html">チーム状況を開く</a>
       </section>
-      
-<div class="grid-3">
-  <article class="card"><h3>チーム離職リスク</h3><p class="card-sub">高・中・低でAI判定したアラートをサムネイル表示します。</p><div class="kpi">3</div><div class="chip-row"><span class="chip danger">高 1</span><span class="chip warning">中 2</span><span class="chip success">低 6</span></div></article>
-  <article class="card"><h3>チーム健康状態</h3><p class="card-sub">チーム全体の健康状態推移の簡易表示</p><div class="placeholder-chart"></div></article>
-  <article class="card thumbnail-card"><div><h3>チーム状況一覧</h3><p class="card-sub">所属メンバーの状態一覧と詳細画面への遷移導線です。</p></div><a class="btn btn-primary" href="./team-overview.html">一覧を見る</a></article>
-</div>
-<div class="grid-2" style="margin-top:20px;">
-  <article class="card"><h3>直近の介入メモ</h3><div class="timeline"><div class="timeline-item"><strong>田中 一郎</strong><div class="card-sub">面談予定を来週に設定</div></div><div class="timeline-item"><strong>鈴木 花子</strong><div class="card-sub">チャットで一次フォロー済み</div></div></div></article>
-  <article class="card"><h3>一般機能への導線</h3><p class="card-sub">Pulse Survey、スキル、AI相談、リファラルは一般エンジニア向け機能と同じデザインルールで利用します。</p><div class="chip-row"><span class="chip success">共通レイアウト採用</span></div></article>
-</div>
 
+      <section class="dashboard-summary-grid" id="managerSummaryStats">
+        <article class="card summary-stat-card"><div class="card-sub">配下メンバー</div><div class="summary-stat-value">-</div></article>
+        <article class="card summary-stat-card"><div class="card-sub">高リスク</div><div class="summary-stat-value">-</div></article>
+        <article class="card summary-stat-card"><div class="card-sub">未回答あり</div><div class="summary-stat-value">-</div></article>
+        <article class="card summary-stat-card"><div class="card-sub">平均スコア</div><div class="summary-stat-value">-</div></article>
+      </section>
+
+      <div class="dashboard-manager-grid" style="margin-top:20px;">
+        <article class="card manager-dashboard-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>チーム離職リスク</h3>
+              <p class="card-sub">高リスクメンバーとリスク分布を表示します。</p>
+            </div>
+            <div id="riskStatusBadge" class="status-badge neutral">読込中</div>
+          </div>
+          <div class="chip-row" id="riskDistributionChips"></div>
+          <div id="managerRiskList" class="manager-risk-list"></div>
+          <div id="managerRiskEmpty" class="empty-state hidden">高リスクメンバーは現在いません。</div>
+        </article>
+
+        <article class="card manager-dashboard-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>チーム健康状態</h3>
+              <p class="card-sub">注目メンバーの直近2週間推移を簡易表示します。</p>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="./team-overview.html">詳細を見る</a>
+          </div>
+          <div class="mini-chart-legend" id="managerMiniChartLegend"></div>
+          <div class="mini-chart-wrap">
+            <svg id="managerMiniTrendSvg" viewBox="0 0 760 260" role="img" aria-label="注目メンバーの健康状態推移"></svg>
+            <div id="managerMiniTrendStatus" class="chart-inline-status">データを読み込んでいます…</div>
+          </div>
+        </article>
+
+        <article class="card manager-dashboard-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>直近の介入メモ</h3>
+              <p class="card-sub">介入メモ機能実装までのプレースホルダーです。</p>
+            </div>
+            <span class="chip warning">TBD</span>
+          </div>
+          <div class="timeline muted-timeline">
+            <div class="timeline-item"><strong>介入メモ機能は次フェーズで実装予定です</strong><div class="card-sub">ここには最新の面談メモや一次フォロー記録を表示する想定です。</div></div>
+            <div class="timeline-item"><strong>表示予定の情報</strong><div class="card-sub">対象メンバー名 / 記録日時 / メモ冒頭 / 詳細遷移</div></div>
+          </div>
+        </article>
+
+        <article class="card manager-dashboard-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>チーム状況一覧</h3>
+              <p class="card-sub">配下メンバーの最新状態を抜粋表示します。</p>
+            </div>
+            <a class="btn btn-primary btn-sm" href="./team-overview.html">一覧を見る</a>
+          </div>
+          <div id="managerTeamTableWrap" class="manager-table-wrap"></div>
+          <div id="managerTeamTableStatus" class="form-message"></div>
+        </article>
+      </div>
     </main>
   </div>
 </div>
   <script type="module" src="./js/app-shell.js"></script>
+  <script type="module" src="./js/dashboard-manager.js"></script>
 </body>
 </html>
