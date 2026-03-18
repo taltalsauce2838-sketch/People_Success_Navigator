@@ -1,130 +1,353 @@
-1. departments テーブル
-•	テーブル概要:
-o	テーブル名: departments 
-o	概要: 社員が所属する部署情報を管理するマスターテーブル 
-o	目的: usersテーブルで部署を参照するための部署マスタ 
-o	関連テーブル: users 
-•	カラム定義:
-o	id: Integer (PK), 部署の一意識別ID 
-o	name: String, 部署名（Unique, Not Null） 
-o	created_at: DateTime, 部署レコード作成日時 
-2. users テーブル
-•	テーブル概要:
-o	テーブル名: users 
-o	概要: システムを利用する社員の基本情報および権限を管理する 
-o	目的: 社員管理・ログイン認証・各種データの紐付け 
-o	関連テーブル: departments / pulse_surveys / skills / skill_history / risk_alerts / ai_consultations / intervention_notes 
-•	カラム定義:
-o	id: Integer (PK), 社員ID 
-o	name: String, 社員名 
-o	email: String (Unique), ログイン用メールアドレス 
-o	hashed_password: String, ハッシュ化されたパスワード 
-o	role: Enum, ユーザー権限（user / manager / admin） 
-o	department_id: Integer (FK), 所属部署ID 
-o	manager_id: Integer (FK), 上司ユーザーID（users自己参照） 
-o	joined_at: Date, 入社日 
-o	created_at: DateTime, レコード作成日時 
-3. pulse_surveys テーブル
-•	テーブル概要:
-o	テーブル名: pulse_surveys 
-o	概要: 社員の日次コンディションを収集するパルスサーベイデータ 
-o	目的: 従業員コンディションの可視化および離職リスク分析。1日1回の投稿制限を含む 
-o	関連テーブル: users / risk_alerts / survey_analysis 
-•	カラム定義:
-o	id: Integer (PK), サーベイID 
-o	user_id: Integer (FK), 回答した社員ID 
-o	score: Integer, コンディション評価（1〜5） 
-o	memo: Text, コメント・メモ 
-o	survey_date: Date, 回答対象日（1日1回制御用） 
-o	created_at: DateTime, 回答日時 
-•	制約: user_id と survey_date の組み合わせによる一意性制約（uq_user_survey_date） 
-4. skill_categories テーブル
-•	テーブル概要:
-o	テーブル名: skill_categories 
-o	概要: スキルカテゴリを管理するマスターテーブル 
-o	目的: skills / skill_historyテーブルで参照されるスキル名称を統一管理 
-o	関連テーブル: skills / skill_history 
-•	カラム定義:
-o	id: Integer (PK), スキルカテゴリID 
-o	name: String (Unique), スキル名称 
-o	created_at: DateTime, 作成日時 
-5. skills テーブル
-•	テーブル概要:
-o	テーブル名: skills 
-o	概要: 社員ごとの最新のスキルレベルを管理する 
-o	目的: スキル成長の可視化やグラフ表示 
-o	関連テーブル: users / skill_categories 
-•	カラム定義:
-o	id: Integer (PK), スキルレコードID 
-o	user_id: Integer (FK), 社員ID 
-o	category_id: Integer (FK), スキルカテゴリID 
-o	level: Integer, スキル習熟度 
-o	updated_at: DateTime, 最終更新日時 
-6. risk_alerts テーブル
-•	テーブル概要:
-o	テーブル名: risk_alerts 
-o	概要: AIによる離職リスク判定結果を保存する 
-o	目的: マネージャーへのアラート表示や対応判断。判定元サーベイとの紐付けを保持 
-o	関連テーブル: users / pulse_surveys 
-•	カラム定義:
-o	id: Integer (PK), アラートID 
-o	user_id: Integer (FK), 対象社員ID 
-o	status: Enum, リスクレベル（low / medium / high） 
-o	reason: Text, AI判定理由 
-o	ai_model: String, 使用AIモデル 
-o	confidence: Float, 判定確信度 
-o	is_resolved: Boolean, 対応済みフラグ 
-o	pulse_survey_id: Integer (FK), 判定元となったパルスサーベイのID 
-o	created_at: DateTime, 判定日時 
-7. ai_consultations テーブル
-•	テーブル概要:
-o	テーブル名: ai_consultations 
-o	概要: 社員がAIに相談した内容と回答ログ 
-o	目的: AI相談履歴管理および感情分析 
-o	関連テーブル: users 
-•	カラム定義:
-o	id: Integer (PK), 相談ログID 
-o	user_id: Integer (FK), 相談者ID 
-o	query_text: Text, ユーザーの相談内容 
-o	sentiment_score: Float, 感情分析スコア 
-o	response_text: Text, AI回答内容 
-o	ai_model: String, 使用AIモデル 
-o	token_usage: Integer, 使用トークン数 
-o	created_at: DateTime, 相談日時 
-8. intervention_notes テーブル
-•	テーブル概要:
-o	テーブル名: intervention_notes 
-o	概要: マネージャーによる社員フォロー記録 
-o	目的: 面談や対応履歴の記録 
-o	関連テーブル: users（対象者および記録者） 
-•	カラム定義:
-o	id: Integer (PK), 記録ID 
-o	target_user_id: Integer (FK), 対象社員ID 
-o	author_id: Integer (FK), 記録したマネージャーID 
-o	content: Text, 面談内容・対応記録 
-o	contact_type: String, 接触方法（面談 / チャット / 電話等） 
-o	created_at: DateTime, 記録日時 
-9. skill_history テーブル（新規）
-•	テーブル概要:
-o	テーブル名: skill_history 
-o	概要: 社員のスキル習熟度の変遷を記録する履歴テーブル 
-o	目的: 成長可視化グラフ等で過去の推移を表示するためのデータ保持 
-o	関連テーブル: users / skill_categories 
-•	カラム定義:
-o	id: Integer (PK), 履歴ID 
-o	user_id: Integer (FK), 社員ID 
-o	category_id: Integer (FK), スキルカテゴリID 
-o	level: Integer, その時点の習熟度 
-o	created_at: DateTime, 記録日時 
-10. survey_analysis テーブル（新規）
-•	テーブル概要:
-o	テーブル名: survey_analysis 
-o	概要: パルスサーベイのフリーコメント等に対するAI分析結果を保持する 
-o	目的: 感情分析スコアなどを個別に管理し、詳細なコンディション分析に活用する 
-o	関連テーブル: pulse_surveys 
-•	カラム定義:
-o	id: Integer (PK), 分析ID 
-o	pulse_survey_id: Integer (FK), 対象のサーベイID 
-o	sentiment_score: Float, AIによる感情スコア（-1.0〜1.0等） 
-o	model_used: String, 使用したAIモデル名やバージョン 
-o	created_at: DateTime, 分析レコード作成日時 
+# DB設計書
+
+## 概要
+
+本書は現状の SQLAlchemy モデルおよび `backend/app.db` の実テーブル定義をもとに整理した DB 設計です。  
+開発途中のため、将来変更される可能性がありますが、少なくとも現時点のローカル実装とは整合する内容でまとめています。
+
+想定 DB:
+
+- ローカル開発: SQLite
+- 接続設定: `DATABASE_URL`
+
+---
+
+## ER 概要
+
+```text
+departments 1 --- n users
+users 1 --- n pulse_surveys
+users 1 --- n skills
+users 1 --- n skill_history
+users 1 --- n risk_alerts
+users 1 --- n ai_consultations
+users 1 --- n intervention_notes (author_id)
+users 1 --- n intervention_notes (target_user_id)
+users 1 --- n users (manager_id 自己参照)
+
+skill_categories 1 --- n skills
+skill_categories 1 --- n skill_history
+
+pulse_surveys 1 --- n survey_analysis
+```
+
+---
+
+## 1. departments
+
+### テーブル概要
+
+部署マスタ。ユーザーの所属先を管理します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | FK | 説明 |
+|---|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  |  | 部署ID |
+| `name` | VARCHAR | NO |  | ✓ |  | 部署名 |
+| `created_at` | DATETIME | YES |  |  |  | 作成日時 |
+
+### 制約・備考
+
+- `name` は一意
+- ユーザーが所属している部署は API 上削除不可
+
+---
+
+## 2. users
+
+### テーブル概要
+
+システム利用ユーザーを管理します。社員・manager・admin を同一テーブルで保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | FK | 説明 |
+|---|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  |  | ユーザーID |
+| `name` | VARCHAR | NO |  |  |  | 氏名 |
+| `email` | VARCHAR | NO |  | ✓ |  | ログインメールアドレス |
+| `hashed_password` | VARCHAR | NO |  |  |  | ハッシュ化済みパスワード |
+| `role` | VARCHAR(7) | YES |  |  |  | `user / manager / admin` |
+| `department_id` | INTEGER | YES |  |  | ✓ | 所属部署ID |
+| `manager_id` | INTEGER | YES |  |  | ✓ | 上司ユーザーID（自己参照） |
+| `joined_at` | DATE | YES |  |  |  | 入社日 |
+| `created_at` | DATETIME | YES |  |  |  | 作成日時 |
+
+### リレーション
+
+- `department_id` → `departments.id`
+- `manager_id` → `users.id`
+
+### 制約・備考
+
+- `email` は一意
+- manager 階層は自己参照で表現
+- 削除時、配下ユーザーの `manager_id` は `null` に更新される実装
+
+---
+
+## 3. pulse_surveys
+
+### テーブル概要
+
+日次のパルスサーベイ回答を保存します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | FK | 説明 |
+|---|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  |  | サーベイID |
+| `user_id` | INTEGER | NO |  |  | ✓ | 回答者ユーザーID |
+| `score` | FLOAT | NO |  |  |  | コンディションスコア |
+| `memo` | TEXT | YES |  |  |  | 自由記述メモ |
+| `survey_date` | DATE | NO |  |  |  | 回答対象日 |
+| `created_at` | DATETIME | YES |  |  |  | 登録日時 |
+
+### 制約・備考
+
+- `user_id + survey_date` に一意制約あり
+- `score` は `1 <= score <= 5` のチェック制約あり
+- 登録後、メモがあれば AI 分析を実施し、スコア補正がかかる実装
+
+---
+
+## 4. survey_analysis
+
+### テーブル概要
+
+パルスサーベイに対する AI 分析結果を保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | FK | 説明 |
+|---|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  |  | 分析ID |
+| `pulse_survey_id` | INTEGER | NO |  |  | ✓ | 対象サーベイID |
+| `sentiment_score` | FLOAT | NO |  |  |  | 感情分析スコア |
+| `reason` | VARCHAR | NO |  |  |  | 分析理由 |
+| `created_at` | DATETIME | YES |  |  |  | 作成日時 |
+
+### リレーション
+
+- `pulse_survey_id` → `pulse_surveys.id`
+
+### 備考
+
+- 1件のサーベイに対して複数分析レコードを保持できる構造です
+- 実運用上は再分析戦略を別途定める余地があります
+
+---
+
+## 5. risk_alerts
+
+### テーブル概要
+
+一定期間のサーベイ系列から生成された離職リスク判定結果を保存します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | FK | 説明 |
+|---|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  |  | アラートID |
+| `user_id` | INTEGER | NO |  |  | ✓ | 対象ユーザーID |
+| `status` | VARCHAR(6) | NO |  |  |  | `low / medium / high` |
+| `reason` | TEXT | YES |  |  |  | 判定理由 |
+| `confidence` | FLOAT | YES |  |  |  | 確信度 |
+| `is_resolved` | BOOLEAN | NO |  |  |  | 対応済みフラグ |
+| `evaluation_start_date` | DATE | NO |  |  |  | 評価期間開始日 |
+| `evaluation_end_date` | DATE | NO |  |  |  | 評価期間終了日 |
+| `judged_at` | DATETIME | NO |  |  |  | 判定日時 |
+| `execution_type` | VARCHAR(6) | NO |  |  |  | `manual / batch` |
+| `created_at` | DATETIME | NO |  |  |  | 作成日時 |
+| `updated_at` | DATETIME | NO |  |  |  | 更新日時 |
+
+### 制約・備考
+
+- 一意制約: `user_id + evaluation_start_date + evaluation_end_date`
+- 同じ評価期間で再判定した場合は update 扱い
+- `status=high` の場合は未対応フラグのまま残す想定
+- `status=low / medium` は新規作成時に自動で `is_resolved=true` となる実装
+
+---
+
+## 6. skill_categories
+
+### テーブル概要
+
+スキルカテゴリのマスタです。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | UK | 説明 |
+|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  | カテゴリID |
+| `name` | VARCHAR | YES |  | ✓ | カテゴリ名 |
+| `created_at` | DATETIME | YES |  |  | 作成日時 |
+
+### 備考
+
+- `name` は一意
+- 現時点では公開 API 未整備だが、画面・将来機能向けの土台として存在
+
+---
+
+## 7. skills
+
+### テーブル概要
+
+ユーザーごとの最新スキルレベルを保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | FK | 説明 |
+|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  | スキルレコードID |
+| `user_id` | INTEGER | YES |  | ✓ | ユーザーID |
+| `category_id` | INTEGER | YES |  | ✓ | スキルカテゴリID |
+| `level` | INTEGER | YES |  |  | 現在レベル |
+| `updated_at` | DATETIME | YES |  |  | 更新日時 |
+
+### 備考
+
+- 最新値テーブルとして使う想定
+- `skill_history` と組み合わせて推移表示可能
+
+---
+
+## 8. skill_history
+
+### テーブル概要
+
+スキルレベルの履歴を保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | FK | 説明 |
+|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  | 履歴ID |
+| `user_id` | INTEGER | NO |  | ✓ | ユーザーID |
+| `category_id` | INTEGER | NO |  | ✓ | スキルカテゴリID |
+| `level` | INTEGER | YES |  |  | 記録時点のレベル |
+| `created_at` | DATETIME | YES |  |  | 記録日時 |
+
+### 備考
+
+- スキル成長グラフや履歴表示に使う想定
+
+---
+
+## 9. ai_consultations
+
+### テーブル概要
+
+AI 相談ログを保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | FK | 説明 |
+|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  | 相談ID |
+| `user_id` | INTEGER | YES |  | ✓ | 相談者ユーザーID |
+| `query_text` | TEXT | YES |  |  | ユーザー入力 |
+| `sentiment_score` | FLOAT | YES |  |  | 感情分析スコア |
+| `response_text` | TEXT | YES |  |  | AI 応答 |
+| `ai_model` | VARCHAR | YES |  |  | 利用モデル名 |
+| `token_usage` | INTEGER | YES |  |  | トークン使用量 |
+| `created_at` | DATETIME | YES |  |  | 作成日時 |
+
+### 備考
+
+- テーブルは存在するが、現時点では公開 API は未整備
+
+---
+
+## 10. intervention_notes
+
+### テーブル概要
+
+manager によるフォロー・対応記録を保持します。
+
+### カラム定義
+
+| カラム名 | 型 | NULL | PK | FK | 説明 |
+|---|---|---|---|---|---|
+| `id` | INTEGER | NO | ✓ |  | 記録ID |
+| `target_user_id` | INTEGER | YES |  | ✓ | 対象ユーザーID |
+| `author_id` | INTEGER | YES |  | ✓ | 記録者ユーザーID |
+| `content` | TEXT | YES |  |  | 記録内容 |
+| `contact_type` | VARCHAR | YES |  |  | 接触方法 |
+| `created_at` | DATETIME | YES |  |  | 作成日時 |
+
+### 備考
+
+- `users` に対して 2 本の FK を持つテーブル
+- フォロー履歴管理のための拡張ポイント
+
+---
+
+## インデックス・一意制約の整理
+
+主要なもの:
+
+- `departments.name`: UNIQUE
+- `users.email`: UNIQUE
+- `pulse_surveys(user_id, survey_date)`: UNIQUE
+- `risk_alerts(user_id, evaluation_start_date, evaluation_end_date)`: UNIQUE
+
+補足:
+
+- `users.id`, `departments.id` は主キー
+- `users.id`, `users.email` はモデル定義上 index 対象
+
+---
+
+## データ上の設計ポイント
+
+### 1. サーベイは「1日1件」
+
+パルスサーベイはユーザー単位・日付単位で一意にしています。  
+日次運用を前提とした分かりやすいモデルです。
+
+### 2. リスク判定は「期間単位」
+
+離職リスクは日単位ではなく期間単位で管理しています。  
+これにより、7日・14日など複数日の傾向を 1 レコードとして持てます。
+
+### 3. スキルは「最新値 + 履歴」
+
+- `skills`: 現在値
+- `skill_history`: 過去履歴
+
+という分離になっており、参照系と履歴系の責務が明確です。
+
+### 4. AI分析は補助テーブルで保持
+
+サーベイ本体に AI カラムを混在させず、`survey_analysis` として分けているため、将来の分析手法差し替えや再分析にも対応しやすい構造です。
+
+---
+
+## 今後見直し候補
+
+- `role` や `status` を DB 方言に依存しにくい形で明示整理する
+- `skills` に `(user_id, category_id)` の一意制約を追加する
+- `survey_analysis` の 1 survey あたり最新1件保証が必要なら一意制約追加を検討
+- `intervention_notes` / `ai_consultations` の公開 API と監査要件を整理する
+- PostgreSQL / MySQL 移行を見据えた型・制約の再検討
+
+---
+
+## テーブル一覧
+
+| テーブル名 | 用途 |
+|---|---|
+| `departments` | 部署マスタ |
+| `users` | ユーザー管理 |
+| `pulse_surveys` | 日次サーベイ |
+| `survey_analysis` | サーベイAI分析 |
+| `risk_alerts` | 離職リスク判定 |
+| `skill_categories` | スキルカテゴリマスタ |
+| `skills` | 現在スキル |
+| `skill_history` | スキル履歴 |
+| `ai_consultations` | AI相談ログ |
+| `intervention_notes` | フォロー記録 |

@@ -1,7 +1,0 @@
-# backend/.env
-PROJECT_NAME="業務改善アプリ"
-DATABASE_URL="sqlite:///./app.db"
-# 実務でPostgreSQLを使う場合は以下のように書き換えます
-# DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
-
-DIFY_API_KEY="app-xxxxxxxxxxxxxxxx"
