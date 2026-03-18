@@ -1,0 +1,224 @@
+app:
+  description: 日次投稿されたpulse_surveyのコメントを判定し、各員の自己評価のメンタルステータスに対して補正値と判断内容を返すアプリケーション
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: pulse_surveyコメントAI評価
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.7@e12c712679171e20bacf59cd12e88efe8c2a508450cd23ce8424a91dc29353db
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: API側のURL共通部分
+    id: 75cc08d1-56b2-4bb6-8aef-cd74a3961b2d
+    name: api_url
+    selector:
+    - env
+    - api_url
+    value: 'https://hottest-schedule-simulations-numeric.trycloudflare.com '
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1773293231738-source-1773289918669-target
+      selected: false
+      source: '1773293231738'
+      sourceHandle: source
+      target: '1773289918669'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1773289918669-source-1773292835931-target
+      source: '1773289918669'
+      sourceHandle: source
+      target: '1773292835931'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 931935a3-4b64-4eea-a7b3-c729b7d852c3
+          role: system
+          text: "あなたは従業員パルスサーベイの分析AIです。\n\n入力された以下の情報を元に従業員の心理状態を分析してください。\n\nscore:\n\
+            1〜5の満足度スコア\n1 = 非常に悪い\n5 = 非常に良い\n\nmemo:\n従業員の自由コメント\n\n出力ルール\n\nmemoの内容からsentiment_score\
+            \ を算出してください。\nsentiment_scoreはユーザの指定したスコアにコメントのニュアンスを反映するための補正値です。\nまた、その算出理由をreasonに記載してください。\n\
+            \nsentiment_score は以下を参考に-1.0~1.0の範囲で設定してください。\n\n1.0に近づくほどポジティブな状態\n\
+            0.0に近いほどフラットな状態\n-1.0に近づくほどネガティブな状態\n\n出力は必ずJSON形式で以下のみ返してください。\n\n{\n\
+            \  \"sentiment_score\": number,\n  \"reason\": string\n}"
+        - id: 7f32fb48-8fe1-41a9-ae3e-731cf73ddfcc
+          role: user
+          text: 'score: {{#1773293231738.score#}}
+
+
+            memo:{{#1773293231738.memo#}}'
+        selected: true
+        structured_output:
+          schema:
+            properties:
+              reason:
+                description: 算出理由
+                type: string
+              sentiment_score:
+                type: number
+            required:
+            - sentiment_score
+            - reason
+            type: object
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1773289918669'
+      position:
+        x: 405.00000000000006
+        y: 297
+      positionAbsolute:
+        x: 405.00000000000006
+        y: 297
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1773289918669'
+          - structured_output
+          - sentiment_score
+          value_type: object
+          variable: sentiment_score
+        - value_selector:
+          - '1773289918669'
+          - structured_output
+          - reason
+          value_type: object
+          variable: reason
+        selected: false
+        title: 出力
+        type: end
+      height: 114
+      id: '1773292835931'
+      position:
+        x: 727.9999999999997
+        y: 297
+      positionAbsolute:
+        x: 727.9999999999997
+        y: 297
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        selected: false
+        title: ユーザー入力
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: memo
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: memo
+        - default: ''
+          hint: ''
+          label: score
+          options: []
+          placeholder: ''
+          required: true
+          type: number
+          variable: score
+      height: 135
+      id: '1773293231738'
+      position:
+        x: 87
+        y: 276
+      positionAbsolute:
+        x: 87
+        y: 276
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 128.92569386010967
+      y: -53.72392661391916
+      zoom: 0.8572439828530726
+  rag_pipeline_variables: []

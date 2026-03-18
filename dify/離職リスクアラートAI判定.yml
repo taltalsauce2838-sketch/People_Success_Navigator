@@ -1,0 +1,238 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 離職リスクアラートAI判定
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.16@e416ee1fa2622b1c917aeb24defe627c6e13517a5c1be690131395d9dbf6f3b8
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1773639728091-source-1773639730834-target
+      source: '1773639728091'
+      sourceHandle: source
+      target: '1773639730834'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1773639730834-source-1773639901164-target
+      source: '1773639730834'
+      sourceHandle: source
+      target: '1773639901164'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: ユーザー入力
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: scores
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: scores
+        - default: ''
+          hint: ''
+          label: memos
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: memos
+      height: 134
+      id: '1773639728091'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 34c46a26-2d83-423c-ad90-2ce27e0b2304
+          role: system
+          text: 'あなたは人事分析AIです。
+
+            社員のコンディションデータを基に離職リスクを評価してください。
+
+
+            評価は慎重かつ客観的に行い、
+
+            単一の要素ではなく複数の要素を総合して判断してください。'
+        - id: 6941a5ee-7887-4f7f-a257-c5a21b6ae283
+          role: user
+          text: "以下はある社員の直近のコンディションデータです。\n\n【数値評価（1〜5）】\n{{#1773639728091.scores#}}\n\
+            \n【自由コメント】\n{{#1773639728091.memos#}}\n\n---\n\n次の観点を総合的に評価してください：\n\n\
+            ■ 評価基準\n\n1. 数値評価の低さ（1〜2は危険）\n2. 評価の下降傾向\n3. ネガティブなコメントの有無\n4. 強い不満・疲労・退職示唆の発言\n\
+            5. 感情分析が継続的に低い\n6. 急激な悪化\n7. コメントが極端に少ない（無関心の可能性）\n\n---\n\n■ 出力形式（必ずJSON）\n\
+            \n以下の形式のみで出力してください：\n\n{\n  \"status\": \"low | medium | high\",\n  \"\
+            confidence\": 0.0〜1.0,\n  \"reason\": \"具体的な判断理由\",\n}\n\n---\n\n■ 判定基準\n\
+            \n● low  \n問題なし、または一時的な不調\n\n● medium  \n注意が必要、継続的な不調や軽度の不満\n\n● high\
+            \  \n離職の可能性が高い、早急な対応が必要\n\n---\n\n■ 注意\n\n- 推測ではなくデータに基づいて判断する\n- 過度に厳しくしすぎない\n\
+            - 重大なリスクは見逃さない\n- 必ずJSONのみ出力する"
+        selected: true
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              confidence:
+                type: number
+              reason:
+                description: 具体的な判断理由
+                type: string
+              status:
+                enum:
+                - low
+                - medium
+                - high
+                type: string
+            required:
+            - status
+            - confidence
+            - reason
+            type: object
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1773639730834'
+      position:
+        x: 378.5177977468155
+        y: 303
+      positionAbsolute:
+        x: 378.5177977468155
+        y: 303
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1773639730834'
+          - structured_output
+          - status
+          value_type: object
+          variable: status
+        - value_selector:
+          - '1773639730834'
+          - structured_output
+          - confidence
+          value_type: object
+          variable: confidence
+        - value_selector:
+          - '1773639730834'
+          - structured_output
+          - reason
+          value_type: object
+          variable: reason
+        selected: false
+        title: 出力
+        type: end
+      height: 140
+      id: '1773639901164'
+      position:
+        x: 680.5177977468155
+        y: 303
+      positionAbsolute:
+        x: 680.5177977468155
+        y: 303
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -355.56397778476276
+      y: -187.75324486774753
+      zoom: 1.148698354997036
+  rag_pipeline_variables: []
