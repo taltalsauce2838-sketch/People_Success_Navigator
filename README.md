@@ -15,7 +15,6 @@ People_Success_Navigator/
 ├── README.md
 ├── backend/
 │   ├── .env                      # ローカル実行用環境変数（実ファイル）
-│   ├── .env.example              # backend 用環境変数サンプル
 │   ├── app.db                    # SQLite DB（ローカル開発用）
 │   ├── requirements.txt          # Python依存関係
 │   ├── alembic/                  # マイグレーション関連
