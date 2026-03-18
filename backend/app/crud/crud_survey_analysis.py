@@ -10,7 +10,7 @@ def update_analysis_result(db, survey_id: int, result: dict):
     if not pulse_survey:
         return None
 
-    sentiment_score = int(result.get("sentiment_score", 0))
+    sentiment_score = float(result.get("sentiment_score", 0))
     reason = result.get("reason", "")
 
     analysis = SurveyAnalysis(
