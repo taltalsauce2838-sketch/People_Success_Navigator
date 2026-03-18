@@ -12,7 +12,7 @@ class PulseSurveyCreate(BaseModel):
 
 class PulseSurveyResponse(BaseModel):
     id: int
-    score: int
+    score: float
     memo: Optional[str]
     survey_date: date
     created_at: datetime
@@ -29,7 +29,7 @@ class PulseSurveyDeleteResponse(BaseModel):
 # サーベイ推移表示用のレスポンススキーマ
 class PulseSurveyTrendResponse(BaseModel):
     survey_date: date
-    score: int
+    score: float
     memo: Optional[str]
 
     class Config:
