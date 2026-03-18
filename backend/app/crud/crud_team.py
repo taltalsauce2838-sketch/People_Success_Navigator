@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_
+from sqlalchemy import and_, func
 
 from app.models.user import User
 from app.models.risk_alert import RiskAlert
 from app.models.pulse_survey import PulseSurvey
 
 
-def get_team_members_with_status(db: Session, manager_id: int):
+def get_team_members_with_status(db: Session, manager_id: int | None):
     """
     manager の部下一覧と
     最新 survey
@@ -14,7 +14,6 @@ def get_team_members_with_status(db: Session, manager_id: int):
     を取得
     """
 
-    # 最新 survey 日付
     latest_survey_date_subquery = (
         db.query(
             PulseSurvey.user_id.label("user_id"),
@@ -24,7 +23,6 @@ def get_team_members_with_status(db: Session, manager_id: int):
         .subquery()
     )
 
-    # 最新 survey 本体
     latest_survey_subquery = (
         db.query(
             PulseSurvey.user_id.label("user_id"),
@@ -41,17 +39,28 @@ def get_team_members_with_status(db: Session, manager_id: int):
         .subquery()
     )
 
-    # 最新 risk_alert id
+    latest_alert_date_subquery = db.query(
+        RiskAlert.user_id.label("user_id"),
+        func.max(RiskAlert.evaluation_end_date).label("latest_evaluation_end_date"),
+    ).group_by(RiskAlert.user_id)
+
+    if manager_id is not None:
+        latest_alert_date_subquery = latest_alert_date_subquery.join(User, User.id == RiskAlert.user_id).filter(
+            User.manager_id == manager_id
+        )
+
+    latest_alert_date_subquery = latest_alert_date_subquery.subquery()
+
     latest_alert_id_subquery = (
         db.query(
             RiskAlert.user_id.label("user_id"),
+            RiskAlert.evaluation_end_date.label("evaluation_end_date"),
             func.max(RiskAlert.id).label("latest_alert_id")
         )
-        .group_by(RiskAlert.user_id)
+        .group_by(RiskAlert.user_id, RiskAlert.evaluation_end_date)
         .subquery()
     )
 
-    # 最新 risk_alert 本体
     latest_alert_subquery = (
         db.query(
             RiskAlert.user_id.label("user_id"),
@@ -60,6 +69,13 @@ def get_team_members_with_status(db: Session, manager_id: int):
         .join(
             latest_alert_id_subquery,
             RiskAlert.id == latest_alert_id_subquery.c.latest_alert_id
+        )
+        .join(
+            latest_alert_date_subquery,
+            and_(
+                latest_alert_date_subquery.c.user_id == latest_alert_id_subquery.c.user_id,
+                latest_alert_date_subquery.c.latest_evaluation_end_date == latest_alert_id_subquery.c.evaluation_end_date,
+            )
         )
         .subquery()
     )
@@ -71,7 +87,6 @@ def get_team_members_with_status(db: Session, manager_id: int):
             latest_alert_subquery.c.status,
             latest_survey_subquery.c.score
         )
-        .filter(User.manager_id == manager_id)
         .outerjoin(
             latest_survey_subquery,
             latest_survey_subquery.c.user_id == User.id
@@ -80,7 +95,9 @@ def get_team_members_with_status(db: Session, manager_id: int):
             latest_alert_subquery,
             latest_alert_subquery.c.user_id == User.id
         )
-        .order_by(User.id.asc())
     )
 
-    return query.all()
+    if manager_id is not None:
+        query = query.filter(User.manager_id == manager_id)
+
+    return query.order_by(User.id.asc()).all()

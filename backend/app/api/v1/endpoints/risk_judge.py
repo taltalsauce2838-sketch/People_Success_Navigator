@@ -1,17 +1,17 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.core.security import get_current_user
-from app.models.user import User
-from app.models.pulse_survey import PulseSurvey
-from app.models.risk_alert import RiskAlert
-from app.services.dify_client import DifyClient2
+from app.models.user import User, UserRole
+from app.services.risk_judge_service import (
+    generate_risk_alerts_for_manager,
+    generate_risk_alerts_for_managers,
+)
 
 router = APIRouter()
-dify_client = DifyClient2()
 
 
 @router.post("/generate")
@@ -19,78 +19,70 @@ async def generate_risk_alerts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     days: int = Query(
-        3,
+        7,
         ge=1,
         le=15,
-        description="分析対象日数（デフォルト3日）"
-    )
+        description="分析対象日数（デフォルト7日）"
+    ),
+    manager_id: int | None = Query(
+        default=None,
+        description="admin のみ指定可能。未指定時は全 manager を対象に実行"
+    ),
 ):
     """
-    直近N日分のサーベイから離職リスクを生成
+    前日までの直近N日分のサーベイから離職リスクを生成または更新。
     """
 
-    manager_id = current_user.id
-    start_date = datetime.utcnow() - timedelta(days=days)
+    role_value = current_user.role.value if hasattr(current_user.role, "value") else str(current_user.role)
+    if role_value not in {"manager", "admin"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="離職リスク再判定は manager / admin のみ実行できます",
+        )
 
-    # ---- マネージャー配下の社員取得 ----
-    members = db.query(User).filter(User.manager_id == manager_id).all()
+    end_survey_date = datetime.utcnow().date() - timedelta(days=1)
 
-    results = []
-
-    for member in members:
-
-        # ---- サーベイ取得 ----
-        surveys = (
-            db.query(PulseSurvey)
-            .filter(
-                PulseSurvey.user_id == member.id,
-                PulseSurvey.created_at >= start_date
+    if role_value == "manager":
+        if manager_id is not None and manager_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="manager は自チーム以外を指定できません",
             )
-            .all()
+        return await generate_risk_alerts_for_manager(
+            db=db,
+            manager_id=current_user.id,
+            days=days,
+            end_survey_date=end_survey_date,
+            execution_type="manual",
         )
 
-        if not surveys:
-            continue
-
-        # ---- AIに渡すデータ作成 ----
-        ai_input = {
-            "scores": [s.score for s in surveys],
-            "memos": [s.memo for s in surveys if s.memo],
-        }
-
-        # ---- Difyで離職判定 ----
-        ai_result = await dify_client.run_risk_assessment(ai_input)
-
-        # 想定レスポンス
-        status = ai_result.get("status", "low")
-        confidence = ai_result.get("confidence", 0.5)
-        reason = ai_result.get("reason", "")
-
-        is_resolved = False if status == "high" else True
-
-        # ---- アラート保存 ----
-        alert = RiskAlert(
-            user_id=member.id,
-            status=status,
-            confidence=confidence,
-            reason=reason,
-            is_resolved=is_resolved,
-            created_at=datetime.utcnow()
+    if manager_id is not None:
+        manager = db.query(User).filter(User.id == manager_id, User.role == UserRole.manager).first()
+        if not manager:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="指定された manager_id の manager が見つかりません",
+            )
+        return await generate_risk_alerts_for_manager(
+            db=db,
+            manager_id=manager_id,
+            days=days,
+            end_survey_date=end_survey_date,
+            execution_type="manual",
         )
 
-        db.add(alert)
+    manager_ids = [
+        user.id
+        for user in db.query(User.id)
+        .filter(User.role == UserRole.manager)
+        .order_by(User.id.asc())
+        .all()
+    ]
 
-        results.append({
-            "user_id": member.id,
-            "name": member.name,
-            "risk_level": status,
-            "confidence": confidence,
-            "reason": reason
-        })
-
-    db.commit()
-
-    return {
-        "generated_count": len(results),
-        "results": results
-    }
+    return await generate_risk_alerts_for_managers(
+        db=db,
+        manager_ids=manager_ids,
+        days=days,
+        end_survey_date=end_survey_date,
+        execution_type="manual",
+    )

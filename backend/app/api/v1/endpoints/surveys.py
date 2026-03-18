@@ -4,7 +4,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from ....db.session import get_db
+from ....db.session import SessionLocal, get_db
 from ....schemas.pulse_survey import (
     PulseSurveyCreate,
     PulseSurveyResponse,
@@ -23,15 +23,19 @@ dify_client = DifyClient()
 import traceback
 
 
-async def process_dify_analysis(survey_id: int, memo: str, score: int, db: Session):
+async def process_post_survey_tasks(survey_id: int, memo: str, score: int, user_id: int):
+    db = SessionLocal()
     try:
         if memo:
             result = await dify_client.run_analysis(memo, score)
             crud_survey_analysis.update_analysis_result(db, survey_id, result)
     except Exception as e:
-        print("Dify Analysis Failed")
+        print("Post Survey Background Task Failed")
         print(e)
         traceback.print_exc()
+        db.rollback()
+    finally:
+        db.close()
 
 def get_visible_user_ids_for_manager(db: Session, manager_user_id: int) -> list[int]:
     subordinate_ids = crud_pulse_survey.get_subordinate_user_ids(db, manager_user_id)
@@ -149,11 +153,11 @@ def create_pulse_survey(
     )
 
     background_tasks.add_task(
-        process_dify_analysis,
+        process_post_survey_tasks,
         survey.id,
         survey.memo,
         survey.score,
-        db
+        current_user.id,
     )
 
     return survey

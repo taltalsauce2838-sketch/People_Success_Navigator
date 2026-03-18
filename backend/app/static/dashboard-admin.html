@@ -1,78 +1,219 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<title>Admin Dashboard</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="./css/style.css" />
+  <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-<div class="app-shell">
-  <aside class="sidebar">
-    <div class="logo-block">
-      <div class="logo-icon">★</div>
-      <div class="logo-text">
-        <h1>People Success Navigator</h1>
-        <p>エンジニア定着支援プラットフォーム</p>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="logo-block">
+        <div class="logo-icon">★</div>
+        <div class="logo-text">
+          <h1>People Success Navigator</h1>
+          <p>エンジニア定着支援プラットフォーム</p>
+        </div>
       </div>
-    </div>
-    <section class="sidebar-profile">
-      <div class="avatar">佐</div>
-      <h3>佐藤 美咲</h3>
-      <div class="role-badge">Admin</div>
-      <div class="footer-note">人事部 / 管理者</div>
-    </section>
-    <div>
-      <div class="nav-label">Sidebar</div>
-      <nav class="side-nav"><a href="./dashboard-admin.html" class="active">ダッシュボード</a>
-<a href="./pulse.html" class="">Pulse Survey</a>
-<a href="./skills.html" class="">スキル成長</a>
-<a href="./ai-chat.html" class="">AI相談</a>
-<a href="./referral.html" class="">リファラル</a>
-<a href="./team-overview.html" class="">チーム状況</a>
-<a href="./member-detail.html" class="">メンバー詳細</a>
-<a href="./company-analytics.html" class="">全社分析</a>
-<a href="./employee-management.html" class="">社員管理</a></nav>
-    </div>
-    <div class="sidebar-actions sidebar-actions-hidden"></div>
-  </aside>
-  <div class="content-shell">
-    <header class="topbar">
-      <nav class="topbar-nav"><a href="./dashboard-user.html" class="">エンジニア</a>
-<a href="./dashboard-manager.html" class="">マネージャー</a>
-<a href="./dashboard-admin.html" class="active">人事・管理者</a></nav>
-      <div class="topbar-right">
+      <section class="sidebar-profile">
+        <div class="avatar">佐</div>
+        <h3>佐藤 美咲</h3>
         <div class="role-badge">Admin</div>
-        <div class="user-chip">
-          <div class="avatar">佐</div>
-          <div>
-            <div><strong>佐藤 美咲</strong></div>
-            <div class="card-sub">人事部 / 管理者</div>
+        <div class="footer-note">人事部 / 管理者</div>
+      </section>
+      <div>
+        <div class="nav-label">Sidebar</div>
+        <nav class="side-nav">
+          <a href="./dashboard-admin.html" class="active">ダッシュボード</a>
+          <a href="./pulse.html">Pulse Survey</a>
+          <a href="./skills.html">スキル成長</a>
+          <a href="./ai-chat.html">AI相談</a>
+          <a href="./referral.html">リファラル</a>
+          <a href="./team-overview.html">チーム状況</a>
+          <a href="./company-analytics.html">全社分析</a>
+          <a href="./employee-management.html">社員管理</a>
+        </nav>
+      </div>
+      <div class="sidebar-actions sidebar-actions-hidden"></div>
+    </aside>
+
+    <div class="content-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">管理ダッシュボード</div>
+          <div class="card-sub">全社運用の入口と管理導線をまとめたハブ画面</div>
+        </div>
+        <div class="topbar-right">
+          <div class="role-badge">Admin</div>
+          <div class="user-chip">
+            <div class="avatar">佐</div>
+            <div>
+              <div><strong>佐藤 美咲</strong></div>
+              <div class="card-sub">人事部 / 管理者</div>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-    <main class="main">
-      <section class="page-header">
-        <div>
-          <h2>マイダッシュボード</h2>
-          <p>人事・経営層向け。全社分析と社員管理への導線を表示します。</p>
-        </div>
-      </section>
-      
-<div class="grid-3">
-  <article class="card"><h3>コスト削減インパクト</h3><p class="card-sub">改善率に応じた削減額シミュレーションのサムネイル</p><div class="kpi">1.8</div><div class="card-sub">億円 / 年</div></article>
-  <article class="card"><h3>全社離職トレンド</h3><p class="card-sub">全社的な離職トレンドの概要表示</p><div class="placeholder-chart"></div></article>
-  <article class="card thumbnail-card"><div><h3>社員管理パネル</h3><p class="card-sub">新規登録・削除・権限変更・所属変更・マネージャー割当の管理導線です。</p></div><a class="btn btn-primary" href="./employee-management.html">管理画面へ</a></article>
-</div>
-<div class="grid-2" style="margin-top:20px;">
-  <article class="card"><h3>全社分析パネル</h3><p class="card-sub">サマリー・トレンド・組織横断の比較表示をまとめます。</p><div style="margin-top:18px;"><a class="btn btn-primary" href="./company-analytics.html">分析画面へ</a></div></article>
-  <article class="card"><h3>監視対象アラート</h3><div class="chip-row"><span class="chip danger">高リスク 5名</span><span class="chip warning">要観察 12名</span><span class="chip success">安定 148名</span></div><p class="footer-note">詳細ロジックは後続実装で接続予定です。</p></article>
-</div>
+      </header>
 
-    </main>
+      <main class="main">
+        <section class="page-header admin-page-header">
+          <div>
+            <h2>管理ハブ</h2>
+            <p>社員管理を中心に、組織サマリーと今後の全社分析導線をまとめています。</p>
+          </div>
+          <div class="page-header-actions">
+            <a class="btn btn-primary" href="./employee-management.html">社員管理を開く</a>
+            <a class="btn btn-secondary" href="./company-analytics.html">全社分析へ</a>
+          </div>
+        </section>
+
+        <section class="admin-summary-grid">
+          <article class="card admin-summary-card">
+            <div class="admin-summary-head">
+              <span class="admin-summary-label">総社員数</span>
+              <span class="chip success">実データ</span>
+            </div>
+            <div class="kpi" id="adminTotalUsers">-</div>
+            <div class="card-sub">登録済みユーザー総数</div>
+          </article>
+
+          <article class="card admin-summary-card">
+            <div class="admin-summary-head">
+              <span class="admin-summary-label">Manager</span>
+              <span class="chip warning">role別</span>
+            </div>
+            <div class="kpi" id="adminManagerCount">-</div>
+            <div class="card-sub">チーム管理権限を持つ人数</div>
+          </article>
+
+          <article class="card admin-summary-card">
+            <div class="admin-summary-head">
+              <span class="admin-summary-label">User</span>
+              <span class="chip neutral-chip">role別</span>
+            </div>
+            <div class="kpi" id="adminUserCount">-</div>
+            <div class="card-sub">一般利用者の人数</div>
+          </article>
+
+          <article class="card admin-summary-card">
+            <div class="admin-summary-head">
+              <span class="admin-summary-label">部署数</span>
+              <span class="chip neutral-chip">実データ</span>
+            </div>
+            <div class="kpi" id="adminDepartmentCount">-</div>
+            <div class="card-sub">登録済みの所属部署数</div>
+          </article>
+        </section>
+
+        <section class="admin-hub-grid">
+          <article class="card admin-hero-card">
+            <div class="section-title-row compact">
+              <div>
+                <h3>社員管理ショートカット</h3>
+                <p class="card-sub">日々の運用で使うアクションをまとめています。</p>
+              </div>
+            </div>
+            <div class="admin-action-grid">
+              <a class="admin-action-tile" href="./employee-management.html">
+                <div>
+                  <strong>社員一覧を確認</strong>
+                  <p class="card-sub">登録状況・権限・所属・マネージャー設定を確認します。</p>
+                </div>
+                <span>→</span>
+              </a>
+              <a class="admin-action-tile" href="./employee-management.html#register">
+                <div>
+                  <strong>新規社員を登録</strong>
+                  <p class="card-sub">管理画面から新規登録モーダルを開いて追加します。</p>
+                </div>
+                <span>→</span>
+              </a>
+              <a class="admin-action-tile" href="./employee-management.html#departments">
+                <div>
+                  <strong>所属・権限を更新</strong>
+                  <p class="card-sub">社員ごとの role / 部署 / manager を変更します。</p>
+                </div>
+                <span>→</span>
+              </a>
+              <a class="admin-action-tile" href="./company-analytics.html">
+                <div>
+                  <strong>全社分析を確認</strong>
+                  <p class="card-sub">全社トレンドや比較分析の受け皿です。</p>
+                </div>
+                <span>→</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="card admin-recent-card">
+            <div class="section-title-row compact">
+              <div>
+                <h3>最近追加された社員</h3>
+                <p class="card-sub">直近の登録状況を素早く確認できます。</p>
+              </div>
+              <a class="btn btn-secondary" href="./employee-management.html">一覧を見る</a>
+            </div>
+            <div id="adminRecentUsers" class="admin-list-stack">
+              <div class="admin-empty-state">読み込み中です…</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-bottom-grid">
+          <article class="card admin-placeholder-card">
+            <div class="section-title-row compact">
+              <div>
+                <h3>全社コンディション分析</h3>
+                <p class="card-sub">今後ここに全社傾向や部署別比較を配置します。</p>
+              </div>
+              <span class="upcoming">TBD</span>
+            </div>
+            <div class="admin-placeholder-block">
+              <div class="admin-placeholder-metric">
+                <strong>全社推移</strong>
+                <span>Pulse とリスクを横断集計</span>
+              </div>
+              <div class="admin-placeholder-metric">
+                <strong>部署別比較</strong>
+                <span>部署ごとの差分や偏りを可視化</span>
+              </div>
+              <div class="admin-placeholder-metric">
+                <strong>未回答率</strong>
+                <span>回答状況の滞留を管理者視点で確認</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="card admin-placeholder-card">
+            <div class="section-title-row compact">
+              <div>
+                <h3>運用メモ / お知らせ</h3>
+                <p class="card-sub">制度変更や運用連絡の掲示エリアとして利用予定です。</p>
+              </div>
+              <span class="upcoming">TBD</span>
+            </div>
+            <div class="timeline admin-note-timeline">
+              <div class="timeline-item">
+                <strong>社員管理の導線を強化済み</strong>
+                <div class="card-sub">登録・編集・削除の運用起点として利用できます。</div>
+              </div>
+              <div class="timeline-item">
+                <strong>全社分析エリアは今後接続予定</strong>
+                <div class="card-sub">ダッシュボードの役割定義に合わせて後続実装を差し込みます。</div>
+              </div>
+              <div class="timeline-item">
+                <strong>管理ハブ型レイアウトへ整理</strong>
+                <div class="card-sub">まずは人事・管理者が使うべき導線を優先しています。</div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
   </div>
-</div>
+
+  <script type="module" src="./js/dashboard-admin.js"></script>
   <script type="module" src="./js/app-shell.js"></script>
 </body>
 </html>

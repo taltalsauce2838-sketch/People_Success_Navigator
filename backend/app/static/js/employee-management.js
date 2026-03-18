@@ -18,6 +18,8 @@ const els = {
   filterRole: document.getElementById("filter-role"),
   filterDepartmentId: document.getElementById("filter-department-id"),
   filterManagerId: document.getElementById("filter-manager-id"),
+  filterRisk: document.getElementById("filter-risk"),
+  sortUsers: document.getElementById("sort-users"),
   filterResetButton: document.getElementById("filter-reset-button"),
   reloadUsersButton: document.getElementById("reload-users-button"),
   createForm: document.getElementById("create-user-form"),
@@ -198,18 +200,73 @@ function renderStats() {
   els.statsAdminRole.textContent = String(counts.admin);
 }
 
+function getRiskOrder(risk) {
+  if (risk === "high") return 0;
+  if (risk === "medium") return 1;
+  if (risk === "low") return 2;
+  return 3;
+}
+
+function getUserRisk(user) {
+  const latestPulse = getLatestPulse(user.id);
+  const numeric = Number(latestPulse?.score);
+  if (!Number.isFinite(numeric)) return "unknown";
+  if (numeric <= 2) return "high";
+  if (numeric === 3) return "medium";
+  return "low";
+}
+
+function compareNullable(a, b, direction = "asc") {
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
+  if (a < b) return direction === "asc" ? -1 : 1;
+  if (a > b) return direction === "asc" ? 1 : -1;
+  return 0;
+}
+
 function applyFilters() {
   const keyword = (els.filterKeyword.value || "").trim().toLowerCase();
   const role = (els.filterRole.value || "").trim().toLowerCase();
   const departmentId = (els.filterDepartmentId.value || "").trim();
   const managerId = (els.filterManagerId.value || "").trim();
+  const risk = (els.filterRisk?.value || "").trim().toLowerCase();
+  const sortBy = (els.sortUsers?.value || "risk_desc").trim();
 
   state.filteredUsers = state.users.filter((user) => {
     const matchesKeyword = !keyword || [user.name, user.email].some((value) => String(value || "").toLowerCase().includes(keyword));
     const matchesRole = !role || String(user.role || "").toLowerCase() === role;
     const matchesDepartment = !departmentId || String(user.department_id ?? "") === departmentId;
     const matchesManager = !managerId || String(user.manager_id ?? "") === managerId;
-    return matchesKeyword && matchesRole && matchesDepartment && matchesManager;
+    const matchesRisk = !risk || getUserRisk(user) === risk;
+    return matchesKeyword && matchesRole && matchesDepartment && matchesManager && matchesRisk;
+  });
+
+  state.filteredUsers.sort((a, b) => {
+    const pulseA = getLatestPulse(a.id);
+    const pulseB = getLatestPulse(b.id);
+    const scoreA = Number.isFinite(Number(pulseA?.score)) ? Number(pulseA.score) : null;
+    const scoreB = Number.isFinite(Number(pulseB?.score)) ? Number(pulseB.score) : null;
+    const riskA = getUserRisk(a);
+    const riskB = getUserRisk(b);
+    const joinedA = a.joined_at || null;
+    const joinedB = b.joined_at || null;
+
+    switch (sortBy) {
+      case "name_asc":
+        return String(a.name || "").localeCompare(String(b.name || ""), "ja");
+      case "joined_asc":
+        return compareNullable(joinedA, joinedB, "asc") || String(a.name || "").localeCompare(String(b.name || ""), "ja");
+      case "joined_desc":
+        return compareNullable(joinedA, joinedB, "desc") || String(a.name || "").localeCompare(String(b.name || ""), "ja");
+      case "pulse_asc":
+        return compareNullable(scoreA, scoreB, "asc") || getRiskOrder(riskA) - getRiskOrder(riskB);
+      case "pulse_desc":
+        return compareNullable(scoreA, scoreB, "desc") || getRiskOrder(riskA) - getRiskOrder(riskB);
+      case "risk_desc":
+      default:
+        return getRiskOrder(riskA) - getRiskOrder(riskB) || compareNullable(scoreA, scoreB, "asc") || String(a.name || "").localeCompare(String(b.name || ""), "ja");
+    }
   });
 
   renderCardList();
@@ -385,6 +442,8 @@ function resetFilters() {
   els.filterRole.value = "";
   els.filterDepartmentId.value = "";
   els.filterManagerId.value = "";
+  if (els.filterRisk) els.filterRisk.value = "";
+  if (els.sortUsers) els.sortUsers.value = "risk_desc";
   applyFilters();
 }
 
@@ -542,7 +601,7 @@ function handleCardListClick(event) {
 }
 
 function bindEvents() {
-  [els.filterKeyword, els.filterRole, els.filterDepartmentId, els.filterManagerId].forEach((element) => {
+  [els.filterKeyword, els.filterRole, els.filterDepartmentId, els.filterManagerId, els.filterRisk, els.sortUsers].forEach((element) => {
     element?.addEventListener("input", applyFilters);
     element?.addEventListener("change", applyFilters);
   });

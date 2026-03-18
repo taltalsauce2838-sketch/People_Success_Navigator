@@ -33,45 +33,111 @@
     <div class="sidebar-actions sidebar-actions-hidden"></div>
   </aside>
   <div class="content-shell">
-    <header class="topbar">
-      <nav class="topbar-nav"><a href="./dashboard-user.html" class="active">エンジニア</a>
-<a href="./dashboard-manager.html" class="">マネージャー</a>
-<a href="./dashboard-admin.html" class="">人事・管理者</a></nav>
-      <div class="topbar-right">
-        <div class="role-badge">User</div>
-        <div class="user-chip">
-          <div class="avatar">山</div>
-          <div>
-            <div><strong>山田 健太</strong></div>
-            <div class="card-sub">プロダクト開発部</div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <header class="topbar"></header>
     <main class="main">
       <section class="page-header">
         <div>
           <h2>マイダッシュボード</h2>
-          <p>一般エンジニア向け。主要機能のサムネイルと導線を表示します。</p>
+          <p>今日の回答状況と、直近2週間のコンディション推移を中心に確認できます。</p>
         </div>
       </section>
-      
-<div class="grid-3">
-  <article class="card thumbnail-card"><div><h3>今日の Pulse Survey</h3><p class="card-sub">5段階評価と一言メモ。日報統合を想定した入力導線です。</p><div class="chip-row"><span class="chip success">本日未回答</span></div></div><a class="btn btn-primary" href="./pulse.html">入力画面へ</a></article>
-  <article class="card thumbnail-card"><div><h3>スキル成長グラフ</h3><p class="card-sub">現在の習熟度と学習進捗を確認するためのサムネイルです。</p></div><a class="btn btn-primary" href="./skills.html">詳細を見る</a></article>
-  <article class="card thumbnail-card"><div><h3>AI一次相談チャット</h3><p class="card-sub">24時間対応の相談窓口。履歴確認は本人のみ閲覧可能想定です。</p><div class="chip-row"><span class="upcoming">初期実装対象外 / UI枠のみ</span></div></div><a class="btn btn-primary" href="./ai-chat.html">画面を見る</a></article>
-</div>
-<div class="grid-2" style="margin-top:20px;">
-  <article class="card">
-    <h3>最近のコンディション</h3><p class="card-sub">直近7日分のサムネイル表示</p><div class="placeholder-chart"></div>
-  </article>
-  <article class="card">
-    <h3>リファラル・知人紹介</h3><p class="card-sub">軽量な連携を想定したリンク・応募フォームの導線です。</p><div class="chip-row"><span class="chip success">紹介リンク掲載</span><span class="chip warning">フォーム準備中</span></div><div style="margin-top:20px;"><a class="btn btn-primary" href="./referral.html">紹介画面へ</a></div></article>
-</div>
 
+      <section class="dashboard-summary-grid user-dashboard-summary-grid">
+        <article class="card summary-stat-card">
+          <div class="card-sub">本日の回答状況</div>
+          <div class="summary-stat-value" id="userAnswerStatusValue">-</div>
+          <div class="chip-row"><span class="chip success" id="userAnswerStatusChip">確認中</span></div>
+        </article>
+        <article class="card summary-stat-card">
+          <div class="card-sub">直近スコア</div>
+          <div class="summary-stat-value" id="userLatestScoreValue">-</div>
+          <div class="card-sub" id="userLatestScoreMeta">最新回答を取得中です</div>
+        </article>
+        <article class="card summary-stat-card">
+          <div class="card-sub">14日平均</div>
+          <div class="summary-stat-value" id="userAverageScoreValue">-</div>
+          <div class="card-sub" id="userAverageScoreMeta">2週間の推移から算出</div>
+        </article>
+        <article class="card summary-stat-card">
+          <div class="card-sub">連続回答日数</div>
+          <div class="summary-stat-value" id="userStreakValue">-</div>
+          <div class="card-sub" id="userStreakMeta">直近の連続回答を表示</div>
+        </article>
+      </section>
+
+      <div class="grid-3 user-dashboard-top-grid" style="margin-top:20px;">
+        <article class="card thumbnail-card">
+          <div>
+            <h3>今日の Pulse Survey</h3>
+            <p class="card-sub">5段階評価と一言メモ。未回答ならそのまま入力へ進めます。</p>
+            <div class="chip-row">
+              <span class="chip" id="todayPulseStatusChip">確認中</span>
+            </div>
+          </div>
+          <a class="btn btn-primary" href="./pulse.html">入力画面へ</a>
+        </article>
+        <article class="card thumbnail-card">
+          <div>
+            <h3>AI一次相談チャット</h3>
+            <p class="card-sub">24時間対応の相談窓口。履歴確認は本人のみ閲覧可能想定です。</p>
+            <div class="chip-row"><span class="upcoming">初期実装対象外 / UI枠のみ</span></div>
+          </div>
+          <a class="btn btn-primary" href="./ai-chat.html">画面を見る</a>
+        </article>
+        <article class="card thumbnail-card user-referral-card">
+          <div>
+            <h3>リファラル・知人紹介</h3>
+            <p class="card-sub">紹介リンクとフォーム導線の軽量カードです。</p>
+            <div class="chip-row"><span class="chip success">紹介リンク掲載</span><span class="chip warning">フォーム準備中</span></div>
+          </div>
+          <a class="btn btn-secondary" href="./referral.html">紹介画面へ</a>
+        </article>
+      </div>
+
+      <div class="grid-2 user-dashboard-bottom-grid" style="margin-top:20px; align-items: stretch;">
+        <article class="card user-condition-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>最近のコンディション</h3>
+              <p class="card-sub">直近2週間の推移を実データで表示します。</p>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="./pulse.html">回答履歴を開く</a>
+          </div>
+          <div id="userConditionStatus" class="chart-inline-status">読み込み中です…</div>
+          <div class="user-condition-chart-wrap">
+            <svg id="userConditionSvg" viewBox="0 0 760 280" role="img" aria-label="最近のコンディション推移"></svg>
+            <div id="userConditionTooltip" class="chart-tooltip hidden"></div>
+          </div>
+          <div class="mini-chart-legend user-condition-legend" id="userConditionLegend"></div>
+          <div class="timeline muted-timeline" id="userConditionLatestList"></div>
+        </article>
+        <article class="card thumbnail-card user-skill-card">
+          <div class="section-title-row compact">
+            <div>
+              <h3>スキル成長グラフ</h3>
+              <p class="card-sub">現在の習熟度と学習進捗を確認するためのTBDエリアです。</p>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="./skills.html">詳細を見る</a>
+          </div>
+          <div class="skill-placeholder-panel">
+            <div class="skill-placeholder-chart">
+              <div class="skill-placeholder-bar h72"></div>
+              <div class="skill-placeholder-bar h48"></div>
+              <div class="skill-placeholder-bar h84"></div>
+              <div class="skill-placeholder-bar h62"></div>
+              <div class="skill-placeholder-bar h92"></div>
+            </div>
+            <div class="skill-placeholder-notes">
+              <span class="chip">TBD機能</span>
+              <p class="card-sub">将来的にはスキルカテゴリ別の推移や学習進捗をここへ統合します。</p>
+            </div>
+          </div>
+        </article>
+      </div>
     </main>
   </div>
 </div>
   <script type="module" src="./js/app-shell.js"></script>
+  <script type="module" src="./js/dashboard-user.js"></script>
 </body>
 </html>

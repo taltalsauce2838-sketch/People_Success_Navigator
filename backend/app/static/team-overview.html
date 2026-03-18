@@ -107,11 +107,57 @@
               </div>
             </div>
 
+            <div class="employee-filter-inline employee-filter-inline-wide employee-filter-inline-extended team-filter-inline">
+              <div>
+                <label>キーワード</label>
+                <input id="team-filter-keyword" class="input" placeholder="氏名で検索" />
+              </div>
+              <div>
+                <label>離職リスク</label>
+                <select id="team-filter-risk" class="select">
+                  <option value="">すべて</option>
+                  <option value="high">高</option>
+                  <option value="medium">中</option>
+                  <option value="low">低</option>
+                  <option value="unknown">未判定</option>
+                </select>
+              </div>
+              <div>
+                <label>回答状況</label>
+                <select id="team-filter-response" class="select">
+                  <option value="">すべて</option>
+                  <option value="answered">回答あり</option>
+                  <option value="missing">未回答あり</option>
+                </select>
+              </div>
+              <div>
+                <label>注目対象</label>
+                <select id="team-filter-focus" class="select">
+                  <option value="">すべて</option>
+                  <option value="focus">注目メンバーのみ</option>
+                </select>
+              </div>
+              <div>
+                <label>並び替え</label>
+                <select id="team-sort" class="select">
+                  <option value="risk_desc">離職リスク順</option>
+                  <option value="latest_date_desc">最終回答日が新しい順</option>
+                  <option value="latest_date_asc">最終回答日が古い順</option>
+                  <option value="score_asc">最新スコアが低い順</option>
+                  <option value="score_desc">最新スコアが高い順</option>
+                  <option value="name_asc">氏名順</option>
+                </select>
+              </div>
+              <div class="team-filter-actions">
+                <button id="team-filter-reset" class="btn btn-secondary" type="button">条件クリア</button>
+              </div>
+            </div>
+
             <div class="employee-list-legend">
               <span class="chip success">離職リスク 低</span>
               <span class="chip warning">離職リスク 中</span>
               <span class="chip danger">離職リスク 高</span>
-              <span class="card-sub">latest_survey_score と risk_level をもとに表示しています。</span>
+              <span class="card-sub">latest_survey_score と risk_level をもとに表示し、未解消アラームがあるメンバーには追加バッジを表示します。一覧は条件絞り込みと並び替えに対応しています。</span>
             </div>
 
             <div class="team-list-status card-sub" id="teamListStatus">読み込み中です…</div>
