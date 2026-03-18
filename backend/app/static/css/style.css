@@ -35,6 +35,9 @@ body.login-page {
   padding: 40px 28px;
 }
 .login-card {
+.login-brand { display:flex; justify-content:center; margin:0 auto 22px; }
+.login-brand img { width: 104px; height: 104px; object-fit: contain; display:block; }
+
   width: 100%; max-width: 540px; background: #f7f8fb;
 }
 .brand-mark {
@@ -79,8 +82,12 @@ body.login-page {
 }
 .logo-block { display: flex; align-items: center; gap: 14px; }
 .logo-icon {
-  width: 42px; height: 42px; border-radius: 12px; background: var(--navy);
-  display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 24px;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  flex: 0 0 42px;
+}
+.logo-icon img {
+  width: 100%; height: 100%; object-fit: contain; display: block;
 }
 .logo-text h1 { margin: 0; font-size: 20px; color: var(--navy); }
 .logo-text p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
